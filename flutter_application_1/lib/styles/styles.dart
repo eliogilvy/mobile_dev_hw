@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 
 class Styles {
-  static TextStyle titleStyle() {
+  static TextStyle titleStyle(Color color) {
     return TextStyle(
       fontSize: 30.0,
+      fontFamily: 'Jost',
+      color: color,
+    );
+  }
+
+  static TextStyle formStyle(double size) {
+    return TextStyle(
+      fontSize: size,
       fontFamily: 'Jost',
       color: Colors.white,
     );
   }
 
-  static TextStyle formStyle() {
+  static TextStyle taskStyle(double size) {
     return TextStyle(
-      fontSize: 15.0,
+      fontSize: size,
       fontFamily: 'Jost',
-      color: Colors.white,
+      color: Colors.black,
     );
   }
 
@@ -21,7 +29,7 @@ class Styles {
     return AppBar(
       title: Text(
         text,
-        style: titleStyle(),
+        style: titleStyle(Colors.white),
       ),
       centerTitle: true,
       backgroundColor: Color.fromARGB(255, 70, 70, 70),
@@ -32,10 +40,22 @@ class Styles {
     return Color.fromARGB(255, 51, 50, 50);
   }
 
+  static Color buttonBackground() {
+    return Color.fromARGB(255, 247, 242, 157);
+  }
+
   static InputDecoration myFormStyle(String text) {
     return InputDecoration(
       labelText: text,
-      labelStyle: formStyle(),
+      labelStyle: formStyle(formSize()),
     );
+  }
+
+  static double formSize() {
+    return 15.0;
+  }
+
+  static double taskSize() {
+    return 20.0;
   }
 }
