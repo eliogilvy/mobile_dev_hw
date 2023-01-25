@@ -1,17 +1,36 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import '../widgets/myTasks.dart';
-import '../styles/styles.dart';
+import 'package:flutter_application_1/pages/task_page.dart';
+import 'package:flutter_application_1/pages/my_tasks.dart';
+import 'package:flutter_application_1/widgets/form/task_form.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Home extends StatelessWidget {
+  Home({super.key});
 
-  @override
-  State<Home> createState() => _HomeState();
-}
+  final routerDelegate = BeamerDelegate(
+    locationBuilder: RoutesLocationBuilder(
+      routes: {
+        '/': (context, state, data) => MyTasks(),
+        '/new': (context, state, data) => TaskForm(
+              data: data as List,
+            ),
+        '/task/:id': (context, state, data) {
+          final int id = int.parse(state.pathParameters['id'] as String);
+          return TaskPage(id: id);
+        }
+      },
+    ),
+  );
 
-class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return MyTasks();
+    return MaterialApp.router(
+      routerDelegate: routerDelegate,
+      routeInformationParser: BeamerParser(),
+      backButtonDispatcher: BeamerBackButtonDispatcher(
+        delegate: routerDelegate,
+        alwaysBeamBack: true,
+      ),
+    );
   }
 }

@@ -46,6 +46,8 @@ class Styles {
 
   static InputDecoration myFormStyle(String text) {
     return InputDecoration(
+      border: InputBorder.none,
+      counterStyle: formStyle(11),
       labelText: text,
       labelStyle: formStyle(formSize()),
     );

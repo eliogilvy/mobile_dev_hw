@@ -1,11 +1,18 @@
 class Task {
+  int id;
   final String title;
   final String desc;
-  final String status;
-  final DateTime lastUpdate;
-  Task(
-      {required this.title,
-      required this.desc,
-      required this.status,
-      required this.lastUpdate});
+  String status;
+  DateTime lastUpdate;
+  Map<int, String> related = {};
+  String taskType;
+  String lastFilter = "";
+  Task({
+    required this.id,
+    required this.title,
+    required this.desc,
+    required this.status,
+    required this.lastUpdate,
+    required this.taskType,
+  });
 }
