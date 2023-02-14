@@ -119,6 +119,7 @@ class _TaskFormState extends State<TaskForm> {
                               status: _selectedStatus,
                               lastUpdate: DateTime.now(),
                               taskType: widget._relationship,
+                              related: {},
                             );
                             if (_recurring == true) {
                               task.taskType = "Recurring";
@@ -129,7 +130,7 @@ class _TaskFormState extends State<TaskForm> {
                                   widget._relatedId, widget._relationship);
                             }
                             FocusScope.of(context).unfocus();
-                            Beamer.of(context).beamBack();
+                            Navigator.of(context).pop();
                           }
                         },
                         child: Text(

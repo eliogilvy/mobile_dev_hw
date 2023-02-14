@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/database/task_db_helper.dart';
 
 import 'task.dart';
 
 class StateInfo with ChangeNotifier {
   StateInfo() {
-    addTask(_test);
+    //addTask(_test);
   }
 
   Task _test = Task(
@@ -14,6 +15,7 @@ class StateInfo with ChangeNotifier {
     status: "Open",
     lastUpdate: DateTime.now(),
     taskType: "Primary",
+    related: {},
   );
 
   List<Task> _taskList = [];
@@ -54,24 +56,21 @@ class StateInfo with ChangeNotifier {
   int _id = 1;
   int _count = 0;
 
-  List<Task> get tasks => _taskList;
-
+  // Non DB provider functions
   List<String> get status => _status;
-
-  List<int> get relatedTasks => _relatedTasks;
-
   List<String> get relationships => _relationships;
+
+  // DB helpers
+  Future<List<Task>> get tasks async => await TaskDatabaseHelper.getTasks();
+
+  Future<Task> getTask(int id) async => await TaskDatabaseHelper.getTask(id);
+
+  //List<int> get relatedTasks => _relatedTasks;
 
   int get count => _count;
 
-  get rela => null;
-
-  void addTask(Task task) {
-    task.id = _id;
-    _tasks[task.id] = task;
-    _count++;
-    _id++;
-    tasksToList();
+  void addTask(Task task) async {
+    await TaskDatabaseHelper.createTask(task);
   }
 
   void sortTasks() {

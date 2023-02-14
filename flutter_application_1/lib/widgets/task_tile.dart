@@ -6,7 +6,8 @@ import '../classes/state_info.dart';
 
 class TaskTile extends StatelessWidget {
   final int id;
-  const TaskTile({super.key, required this.id});
+  final String title;
+  const TaskTile({super.key, required this.id, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -16,21 +17,7 @@ class TaskTile extends StatelessWidget {
           padding: const EdgeInsets.all(4.0),
           child: ListTile(
             onTap: () {
-              Beamer.of(context)
-                  .beamToNamed('/task/${stateInfo.getTaskFromMap(id).id}');
-              // showDialog(
-              //   context: context,
-              //   builder: (BuildContext context) {
-              //     return WillPopScope(
-              //       onWillPop: () async {
-              //         stateInfo.clearRelatedTasks();
-              //         Navigator.of(context).pop();
-              //         return false;
-              //       },
-              //       child: ShowTask(id: id),
-              //     );
-              //   },
-              // );
+              Beamer.of(context).beamToNamed('/task/$id');
             },
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
@@ -38,7 +25,7 @@ class TaskTile extends StatelessWidget {
             tileColor: Styles.buttonBackground(),
             title: Center(
               child: Text(
-                stateInfo.getTaskFromMap(id).title,
+                title,
                 style: Styles.taskStyle(Styles.taskSize()),
               ),
             ),

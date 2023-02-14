@@ -12,6 +12,7 @@ class FormComponents {
 
   static Widget buildTitle(titleController) {
     return TextFormField(
+      key: Key("title"),
       maxLength: 25,
       validator: (value) => _validate(value),
       autocorrect: true,
@@ -24,6 +25,7 @@ class FormComponents {
 
   static Widget buildDesc(descController) {
     return TextFormField(
+      key: Key("desc"),
       maxLength: 250,
       validator: ((value) => _validate(value)),
       autocorrect: true,
@@ -39,6 +41,7 @@ class FormComponents {
   static Widget buildDropdown(BuildContext context, selected,
       List<String> items, String hint, Function callback) {
     return DropdownButtonFormField(
+      key: Key("dropdown"),
       style: Styles.formStyle(18),
       dropdownColor: Styles.myBackground(),
       hint: Text(
