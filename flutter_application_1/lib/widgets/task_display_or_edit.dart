@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/database/task_db_helper.dart';
-import 'package:provider/provider.dart';
-
-import '../classes/state_info.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
 

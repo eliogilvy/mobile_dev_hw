@@ -8,16 +8,7 @@ class StateInfo with ChangeNotifier {
     //addTask(_test);
   }
 
-  Task _test = Task(
-    title: "Test",
-    desc: "This is a test",
-    status: "Open",
-    lastUpdate: DateTime.now(),
-    taskType: "Primary",
-    related: {},
-  );
-
-  List<Task> _taskList = [];
+  List<Task>? _taskList;
   Map<int, Task> _tasks = {};
   List<Task> _relatedTasks = [];
 
@@ -61,10 +52,10 @@ class StateInfo with ChangeNotifier {
 
   // DB helpers
   Future<List<Task>> get tasks async {
-    if (_taskList.isEmpty) {
+    if (_taskList == null) {
       return await TaskDatabaseHelper.getTasks();
     } else {
-      return _taskList;
+      return _taskList!;
     }
   }
 
@@ -79,41 +70,13 @@ class StateInfo with ChangeNotifier {
   }
 
   Future<void> filterTasks(String filter) async {
-    await TaskDatabaseHelper.filterTasks(filter);
-    notifyListeners();
-  }
-
-  void sortTasks() {
-    _taskList.sort(
-      (b, a) => a.lastUpdate.compareTo(b.lastUpdate),
-    );
-  }
-
-  void tasksToList() {
-    _taskList.clear();
-    _taskList.addAll(
-      _tasks.values.where(
-        (element) => (element.taskType == "Primary" ||
-            element.taskType == "Alternative" ||
-            element.taskType == "Recurring"),
-      ),
-    );
-    sortTasks();
+    _taskList = await TaskDatabaseHelper.filterTasks(filter);
     notifyListeners();
   }
 
   void updateTask(Task task) async {
     task.lastUpdate = DateTime.now();
     await TaskDatabaseHelper.updateTask(task);
-    tasksToList();
-  }
-
-  Task getTaskFromMap(int id) {
-    return _tasks.putIfAbsent(id, () => _test);
-  }
-
-  Task getTaskFromList(int index) {
-    return _taskList[index];
   }
 
   void addRelationship(int relatedId, String relationship) async {

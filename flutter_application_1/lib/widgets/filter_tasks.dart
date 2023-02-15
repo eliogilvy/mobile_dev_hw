@@ -3,14 +3,10 @@ import 'package:provider/provider.dart';
 import '../classes/state_info.dart';
 import '../styles/styles.dart';
 
-class Filter extends StatefulWidget {
-  const Filter({super.key});
+class Filter extends StatelessWidget {
+  const Filter({super.key, required this.callback});
+  final Function callback;
 
-  @override
-  State<Filter> createState() => _FilterState();
-}
-
-class _FilterState extends State<Filter> {
   @override
   Widget build(BuildContext context) {
     var stateInfo = Provider.of<StateInfo>(context);
@@ -31,6 +27,7 @@ class _FilterState extends State<Filter> {
                   IconButton(
                     onPressed: () {
                       stateInfo.filterTasks("");
+                      callback();
                       Navigator.of(context).pop();
                     },
                     icon: Icon(
@@ -45,6 +42,7 @@ class _FilterState extends State<Filter> {
                   SimpleDialogOption(
                     onPressed: () {
                       stateInfo.filterTasks(status);
+                      callback();
                       Navigator.pop(context);
                     },
                     child: Text(
@@ -56,6 +54,7 @@ class _FilterState extends State<Filter> {
                   alignment: Alignment.bottomRight,
                   child: SimpleDialogOption(
                     onPressed: () {
+                      callback();
                       Navigator.of(context).pop();
                     },
                     child: const Text('Cancel'),

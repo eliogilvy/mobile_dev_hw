@@ -29,10 +29,15 @@ class _RelationshipListState extends State<RelationshipList> {
           builder: ((context, snapshot) {
             if (snapshot.data!.isNotEmpty) {
               return ListView.builder(
+                shrinkWrap: true,
                 itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {},
+                itemBuilder: (context, index) {
+                  Task relatedTask = snapshot.data![index];
+                  return Text(relatedTask.title);
+                },
               );
             }
+            return Text("Nothing to be found");
           }),
         ),
       ],

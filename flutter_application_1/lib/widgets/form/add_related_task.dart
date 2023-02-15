@@ -47,8 +47,6 @@ class AddRelatedTask extends StatelessWidget {
                     backgroundColor: Styles.buttonBackground(),
                     child: IconButton(
                       onPressed: () {
-                        stateInfo.getTaskFromMap(relatedId).lastFilter =
-                            _selectedRelationship;
                         Beamer.of(context).beamToNamed('/new',
                             data: [_selectedRelationship, relatedId, callback]);
                       },

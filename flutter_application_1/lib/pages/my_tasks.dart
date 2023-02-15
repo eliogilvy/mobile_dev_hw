@@ -21,7 +21,9 @@ class _MyTasksState extends State<MyTasks> {
         margin: EdgeInsets.all(15.0),
         child: Column(
           children: [
-            Align(alignment: Alignment.centerRight, child: Filter()),
+            Align(
+                alignment: Alignment.centerRight,
+                child: Filter(callback: _refresh)),
             TaskList(
               callback: _refresh,
             ),

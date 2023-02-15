@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../styles/styles.dart';
 
-class EditDescBox extends StatefulWidget {
-  const EditDescBox({super.key, required this.desc, required this.callback});
+class DescBox extends StatefulWidget {
+  const DescBox({super.key, required this.desc, required this.callback});
 
-  final Function(String) callback;
+  final Function callback;
   final String desc;
 
   @override
-  State<EditDescBox> createState() => _EditDescBoxState();
+  State<DescBox> createState() => _DescBoxState();
 }
 
-class _EditDescBoxState extends State<EditDescBox> {
+class _DescBoxState extends State<DescBox> {
   @override
   Widget build(BuildContext context) {
+    final controller = TextEditingController(text: widget.desc);
     return Container(
       height: 200,
       width: MediaQuery.of(context).size.width,
@@ -32,10 +33,8 @@ class _EditDescBoxState extends State<EditDescBox> {
           decoration: InputDecoration(
             border: InputBorder.none,
           ),
-          onChanged: (value) {
-            widget.callback(value);
-          },
-          controller: TextEditingController(text: widget.desc),
+          onChanged: (value) {},
+          controller: controller,
           style: Styles.taskStyle(18.0),
           keyboardType: TextInputType.multiline,
           maxLines: 5,

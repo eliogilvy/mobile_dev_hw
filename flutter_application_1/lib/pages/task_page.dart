@@ -87,13 +87,9 @@ class _TaskPageState extends State<TaskPage> {
                       SizedBox(height: 16.0),
                       if (!widget._editing) DescriptionBox(desc: task.desc),
                       if (widget._editing)
-                        EditDescBox(
+                        DescBox(
                           desc: task.desc,
-                          callback: (String value) async {
-                            task.desc = value;
-                            await TaskDatabaseHelper.updateTask(task);
-                            _refresh();
-                          },
+                          callback: _callback,
                         ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -180,6 +176,14 @@ class _TaskPageState extends State<TaskPage> {
         ),
       ),
     );
+  }
+
+  _callback(String text) {}
+
+  void updateDesc(Task task, String desc) async {
+    task.desc = desc;
+    await TaskDatabaseHelper.updateTask(task);
+    _refresh();
   }
 
   void updateEdit(bool edit) {

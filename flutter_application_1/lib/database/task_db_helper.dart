@@ -132,9 +132,13 @@ class TaskDatabaseHelper {
   }
 
   static Future<List<Task>> filterTasks(String filter) async {
+    if (filter == "") {
+      return await TaskDatabaseHelper.getTasks();
+    }
     var database = await TaskDb.instance.database;
-    List<Map> list = await database!
-        .query(tableName, where: 'status = ?', whereArgs: [filter]);
+    List<Map> list = await database!.query(tableName,
+        where: 'status = ? AND (taskType = ? OR taskType = ? OR taskType = ?',
+        whereArgs: [filter, 'Primary', 'Recurring', 'Alternative']);
     List<Task> tasks = [];
 
     for (var element in list) {
