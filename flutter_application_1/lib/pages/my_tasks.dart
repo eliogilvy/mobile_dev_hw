@@ -22,7 +22,9 @@ class _MyTasksState extends State<MyTasks> {
         child: Column(
           children: [
             Align(alignment: Alignment.centerRight, child: Filter()),
-            TaskList(),
+            TaskList(
+              callback: _refresh,
+            ),
           ],
         ),
       ),
@@ -30,7 +32,7 @@ class _MyTasksState extends State<MyTasks> {
         onPressed: () {
           Beamer.of(context).beamToNamed(
             '/new',
-            data: ["Primary", -1],
+            data: ["Primary", -1, _refresh],
           );
         },
         backgroundColor: Styles.buttonBackground(),
@@ -40,5 +42,9 @@ class _MyTasksState extends State<MyTasks> {
         ),
       ),
     );
+  }
+
+  _refresh() {
+    setState(() {});
   }
 }

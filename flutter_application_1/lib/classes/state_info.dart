@@ -9,7 +9,6 @@ class StateInfo with ChangeNotifier {
   }
 
   Task _test = Task(
-    id: 1,
     title: "Test",
     desc: "This is a test",
     status: "Open",
@@ -20,7 +19,7 @@ class StateInfo with ChangeNotifier {
 
   List<Task> _taskList = [];
   Map<int, Task> _tasks = {};
-  List<int> _relatedTasks = [];
+  List<Task> _relatedTasks = [];
 
   List<String> _status = [
     "Open",
@@ -52,16 +51,22 @@ class StateInfo with ChangeNotifier {
     "Alternative": "Alternative",
     "Primary": "Primary",
   };
-
-  int _id = 1;
   int _count = 0;
 
   // Non DB provider functions
   List<String> get status => _status;
   List<String> get relationships => _relationships;
+  List<String> get pluralRelationships => _relationshipPlural.values.toList();
+  List<String> get relationshipsShortened => _relationshipPlural.keys.toList();
 
   // DB helpers
-  Future<List<Task>> get tasks async => await TaskDatabaseHelper.getTasks();
+  Future<List<Task>> get tasks async {
+    if (_taskList.isEmpty) {
+      return await TaskDatabaseHelper.getTasks();
+    } else {
+      return _taskList;
+    }
+  }
 
   Future<Task> getTask(int id) async => await TaskDatabaseHelper.getTask(id);
 
@@ -73,31 +78,15 @@ class StateInfo with ChangeNotifier {
     await TaskDatabaseHelper.createTask(task);
   }
 
+  Future<void> filterTasks(String filter) async {
+    await TaskDatabaseHelper.filterTasks(filter);
+    notifyListeners();
+  }
+
   void sortTasks() {
     _taskList.sort(
       (b, a) => a.lastUpdate.compareTo(b.lastUpdate),
     );
-  }
-
-  void filterTasks(String status) {
-    if (status != "") {
-      _taskList = _tasks.values
-          .where(
-            (element) =>
-                element.status == status &&
-                (element.taskType == "Primary" ||
-                    element.taskType == "Alternative" ||
-                    element.taskType == "Recurring"),
-          )
-          .toList();
-      sortTasks();
-      notifyListeners();
-    } else if (status == "") {
-      tasksToList();
-    } else {
-      _taskList.clear();
-      notifyListeners();
-    }
   }
 
   void tasksToList() {
@@ -113,9 +102,9 @@ class StateInfo with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateTasks(int id, String status) {
-    _tasks[id]?.status = status;
-    _tasks[id]?.lastUpdate = DateTime.now();
+  void updateTask(Task task) async {
+    task.lastUpdate = DateTime.now();
+    await TaskDatabaseHelper.updateTask(task);
     tasksToList();
   }
 
@@ -127,60 +116,23 @@ class StateInfo with ChangeNotifier {
     return _taskList[index];
   }
 
-  void addRelationship(int id, int relatedId, relationship) {
-    _tasks[id]?.related[relatedId] = _relationshipMap[relationship]!;
-    _tasks[relatedId]?.related[id] = relationship;
-    print("Title: ${_tasks[relatedId]?.title} subtask: ${_tasks[id]?.title}");
+  void addRelationship(int relatedId, String relationship) async {
+    Task relatedTask = await TaskDatabaseHelper.getTask(relatedId);
+    Task task = await TaskDatabaseHelper.getLast();
+    relatedTask.related[task.id.toString()] = relationship;
+    task.related[relatedTask.id.toString()] = _relationshipMap[relationship]!;
+    await TaskDatabaseHelper.updateTask(relatedTask);
+    await TaskDatabaseHelper.updateTask(task);
   }
 
-  void removeTask(int id) {
-    _tasks[id]?.related.forEach((key, value) {
-      removeRelationship(key, id);
-    });
-    _tasks.remove(id);
-    tasksToList();
-  }
-
-  void removeRelationship(int relatedId, int id) {
-    _tasks[relatedId]?.related.remove(id);
-  }
-
-  List<int> getRelatedTasks(int id, String relationship) {
-    if (relationship == "") {
-      return [];
-    }
-    print("Clearing");
-    _relatedTasks.clear();
-    _tasks[id]?.related.forEach((key, value) {
-      if (value == relationship) {
-        print("adding $key");
-        _relatedTasks.add(key);
-      }
-    });
-    return _relatedTasks;
-  }
-
-  void clearRelatedTasks() {
-    _relatedTasks.clear();
-    print("Cleared");
-    notifyListeners();
-  }
-
-  void setFilter(int id, String relationship) {
-    getTaskFromMap(id).lastFilter = relationship;
-    notifyListeners();
+  Future<List<Task>> getRelatedTasks(Task task, String relationship) async {
+    return await TaskDatabaseHelper.getRelatedTasksWithFilter(
+        task, relationship);
   }
 
   List<String> relatedTaskDropdown() {
     return _relationships
         .where((element) => element != "Primary" && element != "Recurring")
         .toList();
-  }
-
-  String? getPluralRelationship(String relationship) {
-    if (!_relationshipPlural.containsKey(relationship)) {
-      return null;
-    }
-    return _relationshipPlural[relationship];
   }
 }

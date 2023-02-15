@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/widgets/task_tile.dart';
+import 'package:flutter_application_1/widgets/stateless/task_tile.dart';
+import 'package:provider/provider.dart';
 
+import '../classes/state_info.dart';
 import '../classes/task.dart';
-import '../database/task_db_helper.dart';
 
 class TaskList extends StatefulWidget {
   const TaskList({
     super.key,
+    required this.callback,
   });
+  final Function callback;
 
   @override
   State<TaskList> createState() => _TaskListState();
@@ -16,22 +19,27 @@ class TaskList extends StatefulWidget {
 class _TaskListState extends State<TaskList> {
   @override
   Widget build(BuildContext context) {
+    var stateInfo = Provider.of<StateInfo>(context, listen: true);
     return Flexible(
       child: FutureBuilder<List<Task>>(
-        future: TaskDatabaseHelper.getTasks(),
+        future: stateInfo.tasks,
         initialData: [],
-        builder: (BuildContext context, snapshot) {
-          return snapshot.data!.isEmpty
-              ? Center(child: Text('Loading...'))
-              : ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return TaskTile(
-                      id: snapshot.data![index].id,
-                      title: snapshot.data![index].title,
-                    );
-                  },
-                );
+        builder: (context, snapshot) {
+          if (snapshot.data!.isEmpty) {
+            return Center(
+              child: Text('Nothing to see...'),
+            );
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return TaskTile(
+                id: snapshot.data![index].id,
+                title: snapshot.data![index].title,
+                callback: widget.callback,
+              );
+            },
+          );
         },
       ),
     );

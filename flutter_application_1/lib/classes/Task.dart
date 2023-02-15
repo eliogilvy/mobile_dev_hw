@@ -6,11 +6,10 @@ class Task {
   String desc = "";
   String status = "";
   DateTime lastUpdate = DateTime.now();
-  Map<int, String> related = {};
+  Map<String, String> related = {};
   String taskType = "";
   String lastFilter = "";
   Task({
-    required this.id,
     required this.title,
     required this.desc,
     required this.status,
@@ -38,8 +37,9 @@ class Task {
     title = map['title']!;
     desc = map['desc']!;
     status = map['status']!;
-    lastUpdate = DateTime.parse(map['lastUpdate']!);
-    related = Map<int, String>.from(json.decode(map['related']!));
+    lastUpdate =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(map['lastUpdate']!));
+    related = Map<String, String>.from(json.decode(map['related']!));
     taskType = map['taskType']!;
     lastFilter = map['lastFilter']!;
   }

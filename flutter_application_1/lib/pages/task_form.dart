@@ -2,18 +2,20 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/state_info.dart';
 import 'package:provider/provider.dart';
-import '../../classes/task.dart';
-import '../../styles/styles.dart';
-import 'form_components.dart';
+import '../classes/task.dart';
+import '../styles/styles.dart';
+import '../widgets/form/form_components.dart';
 
 // ignore: must_be_immutable
 class TaskForm extends StatefulWidget {
   String _relationship = "";
   int _relatedId = -1;
+  Function? callback;
 
   TaskForm({super.key, required this.data}) {
     _relationship = data[0];
     _relatedId = data[1];
+    callback = data[2];
   }
 
   final List data;
@@ -113,7 +115,6 @@ class _TaskFormState extends State<TaskForm> {
                         onPressed: () {
                           if (taskForm.currentState!.validate()) {
                             final task = Task(
-                              id: 0,
                               title: _titleController.text,
                               desc: _descController.text,
                               status: _selectedStatus,
@@ -126,11 +127,12 @@ class _TaskFormState extends State<TaskForm> {
                             }
                             stateInfo.addTask(task);
                             if (widget._relatedId != -1) {
-                              stateInfo.addRelationship(stateInfo.count,
+                              stateInfo.addRelationship(
                                   widget._relatedId, widget._relationship);
                             }
+                            widget.callback!();
                             FocusScope.of(context).unfocus();
-                            Navigator.of(context).pop();
+                            Beamer.of(context).beamToNamed('/');
                           }
                         },
                         child: Text(

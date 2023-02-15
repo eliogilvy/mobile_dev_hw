@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_application_1/database/task_db_helper.dart';
 import 'package:provider/provider.dart';
 
 import '../classes/state_info.dart';
+import '../classes/task.dart';
 import '../styles/styles.dart';
 
 class TaskDisplay extends StatefulWidget {
   final bool edit;
-  Function(bool) callback;
-  final int id;
+  Function(bool) updateEdit;
+  Function refresh;
+  final Task task;
   TaskDisplay(
       {super.key,
       required this.edit,
-      required this.callback,
-      required this.id});
+      required this.updateEdit,
+      required this.refresh,
+      required this.task});
 
   @override
   State<TaskDisplay> createState() => _TaskDisplayState();
@@ -23,14 +25,13 @@ class TaskDisplay extends StatefulWidget {
 class _TaskDisplayState extends State<TaskDisplay> {
   @override
   Widget build(BuildContext context) {
-    final stateInfo = Provider.of<StateInfo>(context, listen: false);
     if (!widget.edit) {
       return Expanded(
         child: Row(
           children: [
             Expanded(
               child: Text(
-                stateInfo.getTaskFromMap(widget.id).title,
+                widget.task.title,
                 style: Styles.titleStyle(
                   Styles.myBackground(),
                 ),
@@ -39,7 +40,7 @@ class _TaskDisplayState extends State<TaskDisplay> {
             IconButton(
               icon: Icon(Icons.edit),
               onPressed: () {
-                widget.callback(widget.edit);
+                widget.updateEdit(widget.edit);
               },
             ),
           ],
@@ -52,11 +53,10 @@ class _TaskDisplayState extends State<TaskDisplay> {
             Expanded(
               child: TextField(
                 key: Key("Edit title"),
-                controller: TextEditingController(
-                    text: stateInfo.getTaskFromMap(widget.id).title),
+                controller: TextEditingController(text: widget.task.title),
                 style: Styles.titleStyle(Styles.myBackground()),
                 onChanged: (value) {
-                  stateInfo.getTaskFromMap(widget.id).title = value;
+                  widget.task.title = value;
                 },
                 maxLength: 25,
                 autocorrect: true,
@@ -65,8 +65,10 @@ class _TaskDisplayState extends State<TaskDisplay> {
             ),
             IconButton(
               icon: Icon(Icons.check),
-              onPressed: () {
-                widget.callback(widget.edit);
+              onPressed: () async {
+                await TaskDatabaseHelper.updateTask(widget.task);
+                widget.updateEdit(widget.edit);
+                widget.refresh();
               },
             ),
           ],

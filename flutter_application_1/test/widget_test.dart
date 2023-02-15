@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/state_info.dart';
 import 'package:flutter_application_1/pages/home.dart';
-import 'package:flutter_application_1/widgets/form/task_form.dart';
-import 'package:flutter_application_1/widgets/task_tile.dart';
+import 'package:flutter_application_1/pages/task_form.dart';
+import 'package:flutter_application_1/widgets/stateless/task_tile.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 

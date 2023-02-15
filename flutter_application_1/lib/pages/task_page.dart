@@ -1,29 +1,37 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/database/task_db_helper.dart';
-import 'package:flutter_application_1/widgets/description_box.dart';
+import 'package:flutter_application_1/widgets/stateless/description_box.dart';
 import 'package:flutter_application_1/widgets/edit_description_box.dart';
 import 'package:flutter_application_1/widgets/task_display_or_edit.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import '../classes/state_info.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
-import '../widgets/filter_selection.dart';
+import '../widgets/relationship_list.dart';
+import '../widgets/stateless/update_task.dart';
 import '../widgets/form/add_related_task.dart';
-import '../widgets/related_task_button.dart';
+import '../widgets/stateless/filter_task_button.dart';
 
+// ignore: must_be_immutable
 class TaskPage extends StatefulWidget {
-  TaskPage({super.key, required this.id});
-
+  TaskPage({super.key, required this.id, required this.callback});
   final int id;
   bool _editing = false;
+  final Function callback;
+  String _relationship = "";
 
   @override
   State<TaskPage> createState() => _TaskPageState();
 }
 
 class _TaskPageState extends State<TaskPage> {
+  _refresh({String? relationship}) {
+    if (relationship != null) {
+      widget._relationship = relationship;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,12 +61,17 @@ class _TaskPageState extends State<TaskPage> {
                         children: [
                           TaskDisplay(
                               edit: widget._editing,
-                              callback: updateEdit,
-                              id: widget.id),
-                          DeleteButton(id: widget.id),
+                              updateEdit: updateEdit,
+                              refresh: _refresh,
+                              task: task),
+                          DeleteButton(
+                            id: widget.id,
+                            callback: widget.callback,
+                          ),
                           IconButton(
                             onPressed: () {
-                              Beamer.of(context).beamBack();
+                              widget.callback();
+                              Beamer.of(context).beamToNamed('/');
                             },
                             icon: Icon(Icons.close),
                           ),
@@ -79,12 +92,15 @@ class _TaskPageState extends State<TaskPage> {
                           callback: (String value) async {
                             task.desc = value;
                             await TaskDatabaseHelper.updateTask(task);
+                            _refresh();
                           },
                         ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          RelatedTaskButton(id: widget.id),
+                          FilterTasksButton(
+                            callback: _refresh,
+                          ),
                         ],
                       ),
                       // if (stateInfo.getPluralRelationship(
@@ -101,13 +117,13 @@ class _TaskPageState extends State<TaskPage> {
                       //     child: Text(
                       //         "Showing ${stateInfo.getPluralRelationship(stateInfo.getTaskFromMap(widget.id).lastFilter)}"),
                       //   ),
-                      // Align(
-                      //   alignment: Alignment.topLeft,
-                      //   child: RelationshipList(
-                      //       id: stateInfo.getTaskFromMap(widget.id).id,
-                      //       relationship:
-                      //           stateInfo.getTaskFromMap(widget.id).lastFilter),
-                      // ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: RelationshipList(
+                          task: task,
+                          relationship: widget._relationship,
+                        ),
+                      ),
                       Expanded(
                         child: Align(
                           alignment: Alignment.bottomLeft,
@@ -121,8 +137,9 @@ class _TaskPageState extends State<TaskPage> {
                                     task.status,
                                     style: Styles.taskStyle(18.0),
                                   ),
-                                  DialogButton(
-                                    id: task.id,
+                                  UpdateTaskStatus(
+                                    task: task,
+                                    callback: _refresh,
                                   ),
                                 ],
                               ),
@@ -143,24 +160,23 @@ class _TaskPageState extends State<TaskPage> {
           );
         },
       ),
-      floatingActionButton: Consumer<StateInfo>(
-        builder: (context, stateInfo, child) => FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return RelationshipSelect(
-                  relatedId: stateInfo.getTaskFromMap(widget.id).id,
-                );
-              },
-            );
-          },
-          backgroundColor: Styles.myBackground(),
-          tooltip: "Add related task",
-          child: Icon(
-            Icons.add,
-            color: Styles.buttonBackground(),
-          ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AddRelatedTask(
+                relatedId: widget.id,
+                callback: widget.callback,
+              );
+            },
+          );
+        },
+        backgroundColor: Styles.myBackground(),
+        tooltip: "Add related task",
+        child: Icon(
+          Icons.add,
+          color: Styles.buttonBackground(),
         ),
       ),
     );
@@ -180,9 +196,10 @@ class DeleteButton extends StatelessWidget {
   const DeleteButton({
     super.key,
     required this.id,
+    required this.callback,
   });
-
   final int id;
+  final Function callback;
 
   @override
   Widget build(BuildContext context) {
@@ -219,8 +236,9 @@ class DeleteButton extends StatelessWidget {
                     "Delete",
                     style: Styles.formStyle(Styles.taskSize()),
                   ),
-                  onPressed: () async {
-                    await TaskDatabaseHelper.deleteTask(id);
+                  onPressed: () {
+                    TaskDatabaseHelper.deleteTask(id);
+                    callback();
                     Beamer.of(context).beamBack();
                   },
                 ),
