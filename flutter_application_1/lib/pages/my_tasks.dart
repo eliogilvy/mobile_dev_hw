@@ -1,5 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/widgets/create_qr_button.dart';
 import '../styles/styles.dart';
 import '../widgets/filter_tasks.dart';
 import '../widgets/task_list.dart';
@@ -21,9 +22,13 @@ class _MyTasksState extends State<MyTasks> {
         margin: EdgeInsets.all(15.0),
         child: Column(
           children: [
-            Align(
-                alignment: Alignment.centerRight,
-                child: Filter(callback: _refresh)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CreateQRButton(),
+                Filter(callback: _refresh),
+              ],
+            ),
             TaskList(
               callback: _refresh,
             ),

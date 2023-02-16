@@ -39,7 +39,7 @@ class AddRelationShip extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () => showDialog(
               context: context,
-              builder: (context) => Dialog.fullscreen(
+              builder: (context) => Dialog(
                 backgroundColor: Styles.myBackground(),
                 child: MiniTaskList(
                   relationship: relationship,

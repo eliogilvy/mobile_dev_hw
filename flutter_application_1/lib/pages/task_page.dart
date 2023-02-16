@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/database/task_db_helper.dart';
+import 'package:flutter_application_1/widgets/add_image.dart';
 import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/stateless/description_box.dart';
 import 'package:flutter_application_1/widgets/task_display_or_edit.dart';
@@ -62,6 +63,7 @@ class _TaskPageState extends State<TaskPage> {
                           updateEdit: updateEdit,
                           updateTask: updateTask,
                           task: widget.task),
+                      IconButton(onPressed: () {}, icon: Icon(Icons.image)),
                       DeleteButton(
                         id: widget.task.id,
                         callback: widget.callback,
