@@ -2,13 +2,15 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/styles/styles.dart';
 
+import '../../classes/task.dart';
+
 class TaskTile extends StatelessWidget {
-  final int id;
+  final Task task;
   final String title;
   final Function callback;
   const TaskTile(
       {super.key,
-      required this.id,
+      required this.task,
       required this.title,
       required this.callback});
 
@@ -18,7 +20,8 @@ class TaskTile extends StatelessWidget {
       padding: const EdgeInsets.all(4.0),
       child: ListTile(
         onTap: () {
-          Beamer.of(context).beamToNamed('/task/$id', data: callback);
+          Beamer.of(context)
+              .beamToNamed('/task/${task.id}', data: [task, callback]);
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),

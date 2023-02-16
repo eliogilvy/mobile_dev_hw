@@ -4,6 +4,8 @@ import 'package:flutter_application_1/pages/task_page.dart';
 import 'package:flutter_application_1/pages/my_tasks.dart';
 import 'package:flutter_application_1/pages/task_form.dart';
 
+import '../classes/task.dart';
+
 class Home extends StatelessWidget {
   Home({super.key});
 
@@ -15,11 +17,12 @@ class Home extends StatelessWidget {
               data: data as List,
             ),
         '/task/:id': (context, state, data) {
-          final int id = int.parse(state.pathParameters['id'] as String);
-          var callback = data;
+          var list = data as List;
+          Task task = list[0];
+          var callback = list[1] as Function;
           return TaskPage(
-            id: id,
-            callback: callback as Function,
+            task: task,
+            callback: callback,
           );
         }
       },

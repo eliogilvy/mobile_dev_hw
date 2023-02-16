@@ -9,12 +9,12 @@ import '../widgets/form/form_components.dart';
 // ignore: must_be_immutable
 class TaskForm extends StatefulWidget {
   String _relationship = "";
-  int _relatedId = -1;
+  Task? _relatedTask;
   Function? callback;
 
   TaskForm({super.key, required this.data}) {
     _relationship = data[0];
-    _relatedId = data[1];
+    _relatedTask = data[1];
     callback = data[2];
   }
 
@@ -126,9 +126,9 @@ class _TaskFormState extends State<TaskForm> {
                               task.taskType = "Recurring";
                             }
                             stateInfo.addTask(task);
-                            if (widget._relatedId != -1) {
-                              stateInfo.addRelationship(
-                                  widget._relatedId, widget._relationship);
+                            if (widget._relatedTask != null) {
+                              stateInfo.addRelationship(task,
+                                  widget._relatedTask!, widget._relationship);
                             }
                             widget.callback!();
                             FocusScope.of(context).unfocus();

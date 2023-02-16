@@ -34,7 +34,7 @@ class _TaskListState extends State<TaskList> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               return TaskTile(
-                id: snapshot.data![index].id,
+                task: snapshot.data![index],
                 title: snapshot.data![index].title,
                 callback: widget.callback,
               );

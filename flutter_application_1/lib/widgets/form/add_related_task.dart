@@ -1,14 +1,16 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/styles/styles.dart';
+import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/form/form_components.dart';
 import 'package:provider/provider.dart';
 
 import '../../classes/state_info.dart';
+import '../../classes/task.dart';
 
 class AddRelatedTask extends StatelessWidget {
-  AddRelatedTask({super.key, required this.relatedId, required this.callback});
-  final int relatedId;
+  AddRelatedTask(
+      {super.key, required this.relatedTask, required this.callback});
+  final Task relatedTask;
   final Function callback;
 
   final GlobalKey<FormState> _relatedForm = GlobalKey<FormState>();
@@ -47,8 +49,14 @@ class AddRelatedTask extends StatelessWidget {
                     backgroundColor: Styles.buttonBackground(),
                     child: IconButton(
                       onPressed: () {
-                        Beamer.of(context).beamToNamed('/new',
-                            data: [_selectedRelationship, relatedId, callback]);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AddRelationShip(
+                                  task: relatedTask,
+                                  callback: callback,
+                                  relationship: _selectedRelationship);
+                            });
                       },
                       alignment: Alignment.center,
                       icon: Icon(

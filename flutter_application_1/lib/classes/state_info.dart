@@ -67,6 +67,7 @@ class StateInfo with ChangeNotifier {
 
   void addTask(Task task) async {
     await TaskDatabaseHelper.createTask(task);
+    notifyListeners();
   }
 
   Future<void> filterTasks(String filter) async {
@@ -77,15 +78,15 @@ class StateInfo with ChangeNotifier {
   void updateTask(Task task) async {
     task.lastUpdate = DateTime.now();
     await TaskDatabaseHelper.updateTask(task);
+    notifyListeners();
   }
 
-  void addRelationship(int relatedId, String relationship) async {
-    Task relatedTask = await TaskDatabaseHelper.getTask(relatedId);
-    Task task = await TaskDatabaseHelper.getLast();
+  void addRelationship(Task task, Task relatedTask, String relationship) async {
     relatedTask.related[task.id.toString()] = relationship;
     task.related[relatedTask.id.toString()] = _relationshipMap[relationship]!;
     await TaskDatabaseHelper.updateTask(relatedTask);
     await TaskDatabaseHelper.updateTask(task);
+    notifyListeners();
   }
 
   Future<List<Task>> getRelatedTasks(Task task, String relationship) async {

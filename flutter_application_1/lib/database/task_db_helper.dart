@@ -137,7 +137,7 @@ class TaskDatabaseHelper {
     }
     var database = await TaskDb.instance.database;
     List<Map> list = await database!.query(tableName,
-        where: 'status = ? AND (taskType = ? OR taskType = ? OR taskType = ?',
+        where: 'status = ? AND (taskType = ? OR taskType = ? OR taskType = ?)',
         whereArgs: [filter, 'Primary', 'Recurring', 'Alternative']);
     List<Task> tasks = [];
 

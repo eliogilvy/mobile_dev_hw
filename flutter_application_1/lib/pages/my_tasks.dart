@@ -34,7 +34,7 @@ class _MyTasksState extends State<MyTasks> {
         onPressed: () {
           Beamer.of(context).beamToNamed(
             '/new',
-            data: ["Primary", -1, _refresh],
+            data: ["Primary", null, _refresh],
           );
         },
         backgroundColor: Styles.buttonBackground(),
