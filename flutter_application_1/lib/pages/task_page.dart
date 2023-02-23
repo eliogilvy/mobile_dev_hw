@@ -1,13 +1,19 @@
+import 'dart:io';
+
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_1/database/task_db_helper.dart';
 import 'package:flutter_application_1/widgets/add_image.dart';
 import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/stateless/description_box.dart';
 import 'package:flutter_application_1/widgets/task_display_or_edit.dart';
+import 'package:flutter_application_1/widgets/task_image.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
+import '../widgets/delete_button.dart';
 import '../widgets/relationship_list.dart';
 import '../widgets/stateless/update_task.dart';
 import '../widgets/form/add_related_task.dart';
@@ -40,7 +46,6 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Styles.myBackground(),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(0, 22, 0, 0),
@@ -63,7 +68,10 @@ class _TaskPageState extends State<TaskPage> {
                           updateEdit: updateEdit,
                           updateTask: updateTask,
                           task: widget.task),
-                      IconButton(onPressed: () {}, icon: Icon(Icons.image)),
+                      ImageButton(
+                        task: widget.task,
+                        callback: _refresh,
+                      ),
                       DeleteButton(
                         id: widget.task.id,
                         callback: widget.callback,
@@ -85,49 +93,61 @@ class _TaskPageState extends State<TaskPage> {
                     ),
                   ),
                   SizedBox(height: 16.0),
-                  DescriptionBox(
-                    controller: widget.descController,
-                    edit: widget._editing,
-                    task: widget.task,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      FilterTasksButton(
-                        callback: _refresh,
-                      ),
-                    ],
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: RelationshipList(
-                      task: widget.task,
-                      relationship: widget._relationship,
-                    ),
-                  ),
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          widget.task.image != null
+                              ? TaskImage(
+                                  image: widget.task.image!,
+                                )
+                              : Container(),
+                          DescriptionBox(
+                            controller: widget.descController,
+                            edit: widget._editing,
+                            task: widget.task,
+                          ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text(
-                                widget.task.status,
-                                style: Styles.taskStyle(18.0),
-                              ),
-                              UpdateTaskStatus(
-                                task: widget.task,
+                              FilterTasksButton(
                                 callback: _refresh,
                               ),
                             ],
                           ),
-                          Text(
-                            DateFormat('MM/dd/yy h:mm a')
-                                .format(widget.task.lastUpdate),
-                            style: Styles.taskStyle(15.0),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: RelationshipList(
+                              task: widget.task,
+                              relationship: widget._relationship,
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      widget.task.status,
+                                      style: Styles.taskStyle(18.0),
+                                    ),
+                                    UpdateTaskStatus(
+                                      task: widget.task,
+                                      callback: _refresh,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                DateFormat('MM/dd/yy h:mm a')
+                                    .format(widget.task.lastUpdate),
+                                style: Styles.taskStyle(15.0),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -173,64 +193,5 @@ class _TaskPageState extends State<TaskPage> {
     task.desc = widget.descController.text;
     await TaskDatabaseHelper.updateTask(task);
     setState(() {});
-  }
-}
-
-class DeleteButton extends StatelessWidget {
-  const DeleteButton({
-    super.key,
-    required this.id,
-    required this.callback,
-  });
-  final int id;
-  final Function callback;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.delete),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Styles.myBackground(),
-              title: Text(
-                "Delete task",
-                style: Styles.formStyle(
-                  Styles.taskSize(),
-                ),
-              ),
-              content: Text(
-                "Are you sure you want to delete this task?",
-                style: Styles.formStyle(Styles.taskSize()),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text(
-                    "Cancel",
-                    style: Styles.formStyle(Styles.taskSize()),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: Text(
-                    "Delete",
-                    style: Styles.formStyle(Styles.taskSize()),
-                  ),
-                  onPressed: () {
-                    TaskDatabaseHelper.deleteTask(id);
-                    callback();
-                    Beamer.of(context).beamBack();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 }

@@ -18,19 +18,17 @@ class DescriptionBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return !edit
-        ? SingleChildScrollView(
-            child: Container(
-              height: 200,
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.all(10),
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(5)),
-              child: Text(
-                task.desc,
-                style: Styles.taskStyle(18.0),
-              ),
+        ? Container(
+            height: 200,
+            width: MediaQuery.of(context).size.width,
+            margin: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(5)),
+            child: Text(
+              task.desc,
+              style: Styles.taskStyle(18.0),
             ),
           )
         : EditDescriptionBox(

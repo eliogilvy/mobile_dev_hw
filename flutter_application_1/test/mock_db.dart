@@ -1,17 +1,17 @@
-import 'package:path/path.dart';
+import 'package:flutter_application_1/database/task_db.dart';
+import 'package:mockito/mockito.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class TaskDb {
-  static const databaseName = "TaskApp.db";
-  static const _databaseVersion = 1;
-
-  TaskDb._internal();
-
-  static final TaskDb databaseHelper = TaskDb._internal();
-  static TaskDb get instance => databaseHelper;
-
+class MockDb extends Mock implements TaskDb {
   static Database? _database;
 
+  MockDb._internal();
+
+  static final databaseHelper = MockDb._internal();
+  static MockDb get instance => databaseHelper;
+
+  @override
   Future<Database?> get database async {
     if (_database != null) return _database;
     _database = await _initDatabase();
@@ -19,10 +19,10 @@ class TaskDb {
   }
 
   Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    String path = join(dbPath, databaseName);
-    return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfiNoIsolate;
+    return await openDatabase(inMemoryDatabasePath,
+        version: 1, onCreate: _onCreate);
   }
 
   Future _onCreate(Database db, int version) async {

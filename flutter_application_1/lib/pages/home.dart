@@ -7,27 +7,8 @@ import 'package:flutter_application_1/pages/task_form.dart';
 import '../classes/task.dart';
 
 class Home extends StatelessWidget {
-  Home({super.key});
-
-  final routerDelegate = BeamerDelegate(
-    locationBuilder: RoutesLocationBuilder(
-      routes: {
-        '/': (context, state, data) => MyTasks(key: UniqueKey()),
-        '/new': (context, state, data) => TaskForm(
-              data: data as List,
-            ),
-        '/task/:id': (context, state, data) {
-          var list = data as List;
-          Task task = list[0];
-          var callback = list[1] as Function;
-          return TaskPage(
-            task: task,
-            callback: callback,
-          );
-        }
-      },
-    ),
-  );
+  Home({super.key, required this.routerDelegate});
+  final BeamerDelegate routerDelegate;
 
   @override
   Widget build(BuildContext context) {

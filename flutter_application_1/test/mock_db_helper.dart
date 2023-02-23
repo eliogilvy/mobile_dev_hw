@@ -1,20 +1,22 @@
 import 'dart:convert';
 
+import 'package:flutter_application_1/classes/task.dart';
 import 'package:flutter_application_1/database/task_db.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../classes/task.dart';
+import 'mock_db.dart';
 
-class TaskDatabaseHelper {
+class MockDatabaseHelper {
   static String tableName = "Task";
 
-  static void drop() async {
-    var database = await TaskDb.instance.database;
-    database!.delete(tableName);
+  static void deleteAll() async {
+    var database = await MockDb.instance.database;
+    await database!.delete(tableName);
   }
 
   static Future<int> createTask(Task task) async {
-    var database = await TaskDb.instance.database;
+    var database = await MockDb.instance.database;
+    print('adding task');
     return await database!.insert(
       tableName,
       {
@@ -32,7 +34,7 @@ class TaskDatabaseHelper {
   }
 
   static Future<Task> getLast() async {
-    var database = await TaskDb.instance.database;
+    var database = await MockDb.instance.database;
     List<Map> list =
         await database!.query(tableName, orderBy: 'id DESC', limit: 1);
 
@@ -41,7 +43,7 @@ class TaskDatabaseHelper {
   }
 
   static Future<List<Task>> getTasks() async {
-    var database = await TaskDb.instance.database;
+    var database = await MockDb.instance.database;
     List<Map> list = await database!.query(
       tableName,
       where: 'taskType = ? OR taskType = ? OR taskType = ?',
@@ -60,7 +62,7 @@ class TaskDatabaseHelper {
   }
 
   static Future<Task> getTask(int id) async {
-    var database = await TaskDb.instance.database;
+    var database = await MockDb.instance.database;
     var item = await database!.query(
       tableName,
       where: 'id = ?',
@@ -72,7 +74,7 @@ class TaskDatabaseHelper {
   }
 
   static Future<List<Task>> getRelatedTasks(Task task) async {
-    var database = await TaskDb.instance.database;
+    var database = await MockDb.instance.database;
     List<Task> tasks = [];
     for (var relatedTask in task.related.keys) {
       var item = await database!.query(
@@ -89,16 +91,15 @@ class TaskDatabaseHelper {
   static Future<List<Task>> getRelatedTasksWithFilter(List<int> list) async {
     List<Task> tasks = [];
     {
-      var database = await TaskDb.instance.database;
       for (int id in list) {
-        tasks.add(await TaskDatabaseHelper.getTask(id));
+        tasks.add(await MockDatabaseHelper.getTask(id));
       }
     }
     return tasks;
   }
 
   static Future<void> updateTask(Task task) async {
-    var database = await TaskDb.instance.database;
+    var database = await MockDb.instance.database;
     await database!.update(
       tableName,
       {
@@ -117,7 +118,7 @@ class TaskDatabaseHelper {
   }
 
   static Future<void> deleteTask(int id) async {
-    var database = await TaskDb.instance.database;
+    var database = await MockDb.instance.database;
     await database!.delete(
       tableName,
       where: 'id = ?',
@@ -126,10 +127,10 @@ class TaskDatabaseHelper {
   }
 
   static Future<List<Task>> filterTasks(String filter) async {
+    var database = await MockDb.instance.database;
     if (filter == "") {
-      return await TaskDatabaseHelper.getTasks();
+      return await MockDatabaseHelper.getTasks();
     }
-    var database = await TaskDb.instance.database;
     List<Map> list = await database!.query(tableName,
         where: 'status = ? AND (taskType = ? OR taskType = ? OR taskType = ?)',
         whereArgs: [filter, 'Primary', 'Recurring', 'Alternative']);

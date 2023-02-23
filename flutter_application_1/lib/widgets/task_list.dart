@@ -25,7 +25,7 @@ class _TaskListState extends State<TaskList> {
         future: stateInfo.tasks,
         initialData: [],
         builder: (context, snapshot) {
-          if (snapshot.data!.isEmpty) {
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
             return Center(
               child: Text('Nothing to see...'),
             );
@@ -35,7 +35,6 @@ class _TaskListState extends State<TaskList> {
             itemBuilder: (context, index) {
               return TaskTile(
                 task: snapshot.data![index],
-                title: snapshot.data![index].title,
                 callback: widget.callback,
               );
             },

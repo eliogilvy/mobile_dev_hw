@@ -1,39 +1,38 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../classes/state_info.dart';
+import '../classes/task.dart';
 
-class AddImageContainer extends StatefulWidget {
-  const AddImageContainer({super.key});
+class ImageButton extends StatelessWidget {
+  ImageButton({super.key, required this.task, required this.callback});
+  Task task;
+  Function callback;
 
-  @override
-  State<AddImageContainer> createState() => _AddImageContainerState();
-}
-
-class _AddImageContainerState extends State<AddImageContainer> {
-  final ImagePicker _picker = ImagePicker();
-  late XFile? image;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: image != null ? Container() : Image.file(File(image!.path)),
-    );
+    var stateInfo = Provider.of<StateInfo>(context);
+    return IconButton(
+        onPressed: () {
+          _pickImage(stateInfo);
+        },
+        icon: Icon(Icons.image));
   }
 
-  Future pickImage() async {
+  void _pickImage(stateInfo) async {
+    XFile? image;
     try {
-      image = await _picker.pickImage(source: ImageSource.gallery);
+      image = await ImagePicker().pickImage(source: ImageSource.gallery);
 
       if (image == null) {
         return;
       }
-      final imageTemp = XFile(image!.path);
-      setState(() {
-        this.image = imageTemp;
-      });
+      task.image = image.path;
+      stateInfo.updateTask(task);
+      callback();
     } on PlatformException catch (e) {
-      print("eror");
+      print("error");
     }
   }
 }

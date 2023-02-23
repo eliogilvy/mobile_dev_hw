@@ -112,9 +112,9 @@ class _TaskFormState extends State<TaskForm> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Styles.buttonBackground()),
-                        onPressed: () {
+                        onPressed: () async {
                           if (taskForm.currentState!.validate()) {
-                            final task = Task(
+                            Task task = Task(
                               title: _titleController.text,
                               desc: _descController.text,
                               status: _selectedStatus,
@@ -127,11 +127,11 @@ class _TaskFormState extends State<TaskForm> {
                             }
                             stateInfo.addTask(task);
                             if (widget._relatedTask != null) {
+                              task = await stateInfo.getNewTask();
                               stateInfo.addRelationship(task,
                                   widget._relatedTask!, widget._relationship);
                             }
                             widget.callback!();
-                            FocusScope.of(context).unfocus();
                             Beamer.of(context).beamToNamed('/');
                           }
                         },

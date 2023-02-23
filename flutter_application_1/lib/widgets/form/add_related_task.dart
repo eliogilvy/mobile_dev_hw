@@ -49,14 +49,16 @@ class AddRelatedTask extends StatelessWidget {
                     backgroundColor: Styles.buttonBackground(),
                     child: IconButton(
                       onPressed: () {
+                        Navigator.of(context).pop();
                         showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AddRelationShip(
-                                  task: relatedTask,
-                                  callback: callback,
-                                  relationship: _selectedRelationship);
-                            });
+                          context: context,
+                          builder: (context) {
+                            return AddRelationship(
+                                task: relatedTask,
+                                callback: callback,
+                                relationship: _selectedRelationship);
+                          },
+                        );
                       },
                       alignment: Alignment.center,
                       icon: Icon(

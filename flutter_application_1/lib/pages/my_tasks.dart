@@ -1,6 +1,8 @@
 import 'package:beamer/beamer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/widgets/create_qr_button.dart';
+import 'package:flutter_application_1/widgets/stateless/qr_button.dart';
+import '../classes/auth.dart';
 import '../styles/styles.dart';
 import '../widgets/filter_tasks.dart';
 import '../widgets/task_list.dart';
@@ -12,9 +14,52 @@ class MyTasks extends StatefulWidget {
   State<MyTasks> createState() => _MyTasksState();
 }
 
-class _MyTasksState extends State<MyTasks> {
+class _MyTasksState extends State<MyTasks> with WidgetsBindingObserver {
+  final User? user = Auth().user;
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        // Show a SnackBar after a delay of 1 second
+        Future.delayed(
+          Duration(seconds: 1),
+          () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Tap and hold a task to generate a QR code!'),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('called');
+    if (state == AppLifecycleState.resumed) {
+      // Show a SnackBar when the app is resumed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Tap and hold a task to generate a QR code!'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(user!.displayName);
     return Scaffold(
       backgroundColor: Styles.myBackground(),
       appBar: Styles.myAppBar("Eli Ogilvy"),
@@ -25,11 +70,12 @@ class _MyTasksState extends State<MyTasks> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                CreateQRButton(),
-                Filter(callback: _refresh),
+                QRButton(),
+                Filter(key: Key('Filter'), callback: _refresh),
               ],
             ),
             TaskList(
+              key: Key('Task list'),
               callback: _refresh,
             ),
           ],

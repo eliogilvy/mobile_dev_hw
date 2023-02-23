@@ -6,8 +6,8 @@ import '../classes/state_info.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
 
-class AddRelationShip extends StatelessWidget {
-  const AddRelationShip(
+class AddRelationship extends StatelessWidget {
+  const AddRelationship(
       {super.key,
       required this.task,
       required this.callback,
@@ -19,37 +19,57 @@ class AddRelationShip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
+      backgroundColor: Styles.myBackground(),
       children: [
-        Container(
-          alignment: Alignment.centerLeft,
-          width: MediaQuery.of(context).size.width / 2,
-          color: Styles.myBackground(),
-          child: ElevatedButton(
-            onPressed: () => Beamer.of(context).beamToNamed(
-              '/new',
-              data: [relationship, task, callback],
-            ),
-            child: Text("Create new task"),
-          ),
-        ),
-        Container(
-          alignment: Alignment.centerRight,
-          width: MediaQuery.of(context).size.width / 2,
-          color: Styles.myBackground(),
-          child: ElevatedButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => Dialog(
-                backgroundColor: Styles.myBackground(),
-                child: MiniTaskList(
-                  relationship: relationship,
-                  task: task,
-                  callback: callback,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  color: Styles.buttonBackground(),
+                  onPressed: () => Beamer.of(context).beamToNamed(
+                    '/new',
+                    data: [relationship, task, callback],
+                  ),
                 ),
-              ),
+                Text(
+                  "Create new task",
+                  style: Styles.formStyle(Styles.formSize()),
+                ),
+              ],
             ),
-            child: Text("Add existing task"),
-          ),
+            SizedBox(width: 10.0),
+            Column(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.playlist_add_check),
+                  color: Styles.buttonBackground(),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) => Dialog(
+                        backgroundColor: Styles.myBackground(),
+                        child: MiniTaskList(
+                          relationship: relationship,
+                          task: task,
+                          callback: callback,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                Text(
+                  "Select existing task",
+                  style: Styles.formStyle(
+                    Styles.formSize(),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ],
     );
@@ -73,9 +93,8 @@ class MiniTaskList extends StatelessWidget {
     return Flexible(
       child: FutureBuilder<List<Task>>(
         future: stateInfo.tasks,
-        initialData: [],
         builder: (context, snapshot) {
-          if (snapshot.data!.isEmpty) {
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
             return Center(
               child: Text('Nothing to see...'),
             );
@@ -94,8 +113,8 @@ class MiniTaskList extends StatelessWidget {
                       onTap: () {
                         stateInfo.addRelationship(
                             snapshot.data![index], task, relationship);
-                        Beamer.of(context).beamToNamed('/task/${task.id}',
-                            data: [task, callback]);
+                        callback();
+                        Navigator.of(context).pop();
                       },
                     )
                   : Container();

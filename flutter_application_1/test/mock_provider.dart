@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/database/task_db_helper.dart';
+import 'package:flutter_application_1/classes/state_info.dart';
+import 'package:flutter_application_1/classes/task.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
-import 'task.dart';
+import 'mock_db_helper.dart';
 
-class StateInfo with ChangeNotifier {
-  StateInfo() {
-    //addTask(_test);
-  }
-
+class MockStateInfo extends Mock with ChangeNotifier implements StateInfo {
   List<Task>? _taskList;
   Map<int, Task> _tasks = {};
   List<Task> _relatedTasks = [];
@@ -45,51 +44,63 @@ class StateInfo with ChangeNotifier {
   int _count = 0;
 
   // Non DB provider functions
+  @override
   List<String> get status => _status;
+  @override
   List<String> get relationships => _relationships;
+  @override
   List<String> get pluralRelationships => _relationshipPlural.values.toList();
+  @override
   List<String> get relationshipsShortened => _relationshipPlural.keys.toList();
 
   // DB helpers
+  @override
   Future<List<Task>> get tasks async {
     if (_taskList == null) {
-      return await TaskDatabaseHelper.getTasks();
+      return await MockDatabaseHelper.getTasks();
     } else {
       return _taskList!;
     }
   }
 
-  Future<Task> getTask(int id) async => await TaskDatabaseHelper.getTask(id);
+  @override
+  Future<Task> getTask(int id) async => await MockDatabaseHelper.getTask(id);
 
   //List<int> get relatedTasks => _relatedTasks;
 
+  @override
   int get count => _count;
 
+  @override
   void addTask(Task task) async {
-    int id = await TaskDatabaseHelper.createTask(task);
+    int id = await MockDatabaseHelper.createTask(task);
     print("task $id");
     notifyListeners();
   }
 
+  @override
   Future<void> filterTasks(String filter) async {
-    _taskList = await TaskDatabaseHelper.filterTasks(filter);
+    _taskList = await MockDatabaseHelper.filterTasks(filter);
     notifyListeners();
   }
 
+  @override
   void updateTask(Task task) async {
     task.lastUpdate = DateTime.now();
-    await TaskDatabaseHelper.updateTask(task);
+    await MockDatabaseHelper.updateTask(task);
     notifyListeners();
   }
 
+  @override
   void addRelationship(Task task, Task relatedTask, String relationship) async {
     relatedTask.related[task.id.toString()] = relationship;
     task.related[relatedTask.id.toString()] = _relationshipMap[relationship]!;
-    await TaskDatabaseHelper.updateTask(relatedTask);
-    await TaskDatabaseHelper.updateTask(task);
+    await MockDatabaseHelper.updateTask(relatedTask);
+    await MockDatabaseHelper.updateTask(task);
     notifyListeners();
   }
 
+  @override
   Future<List<Task>> getRelatedTasks(Task task, String relationship) async {
     print(task.related);
     List<int> related = [];
@@ -100,13 +111,15 @@ class StateInfo with ChangeNotifier {
         }
       },
     );
-    return await TaskDatabaseHelper.getRelatedTasksWithFilter(related);
+    return await MockDatabaseHelper.getRelatedTasksWithFilter(related);
   }
 
+  @override
   Future<Task> getNewTask() async {
-    return await TaskDatabaseHelper.getLast();
+    return await MockDatabaseHelper.getLast();
   }
 
+  @override
   List<String> relatedTaskDropdown() {
     return _relationships
         .where((element) => element != "Primary" && element != "Recurring")

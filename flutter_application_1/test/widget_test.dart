@@ -1,45 +1,64 @@
-import 'dart:math';
-
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/state_info.dart';
+import 'package:flutter_application_1/classes/task.dart';
 import 'package:flutter_application_1/pages/home.dart';
+import 'package:flutter_application_1/pages/my_tasks.dart';
 import 'package:flutter_application_1/pages/task_form.dart';
+import 'package:flutter_application_1/pages/task_page.dart';
 import 'package:flutter_application_1/widgets/stateless/task_tile.dart';
+import 'package:flutter_application_1/widgets/task_list.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+import 'mock_db_helper.dart';
+import 'mock_provider.dart';
+
+void main() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  tearDown(() async {
+    MockDatabaseHelper.deleteAll();
+  });
+
   // This test is
   testWidgets("Check that there are no tasks in the list at startup",
       (tester) async {
-    await tester.pumpWidget(testWidget());
+    await tester.runAsync(() async {
+      await tester.pumpWidget(testWidget());
 
-    // Find the listview for tasks
-    final listViewFinder = find.byType(ListView);
-    expect(listViewFinder, findsOneWidget);
+      final nameFinder = find.text('Eli Ogilvy');
+      expect(nameFinder, findsOneWidget);
 
-    // // Find the task tile, but should find none
-    final itemFinder = find.byType(TaskTile);
-    expect(itemFinder, findsNothing);
+      // Find the listview for tasks
+      final listViewFinder = find.byType(TaskList);
+      expect(listViewFinder, findsOneWidget);
+
+      // // Find the task tile, but should find none
+      final itemFinder = find.byType(TaskTile);
+      expect(itemFinder, findsNothing);
+    });
   });
 
   testWidgets(
-      'This test confirms the following: A button that when clicked tells the'
-      'navigator/router to go to the widget for creating a new task, shows a'
-      'separate widget for each task when there are tasks to list, Indicates'
-      'the name of the task, shows only some of the tasks when a filter is applied.',
-      (tester) async {
+      'This test confirms the following: A button that when clicked tells beamer '
+      'to go to /task/id, shows a separate widget for each task when there are '
+      'multiple tasks in th list, Indicates the name of the task, shows only '
+      'some of the tasks when a filter is applied.', (tester) async {
     await tester.pumpWidget(testWidget());
+    await addTask(tester, 'Test1', 'Open');
+    await addTask(tester, 'Test2', 'In Progress');
 
     // These are also tests for adding a task
-    await addTask(tester, "Test1", "Open");
-    await addTask(tester, "Test2", "In Progress");
+
+    final titleFinder = find.text('Eli Ogilvy');
+    expect(titleFinder, findsOneWidget);
 
     // Verify multiple task tiles
     final tileCheck = find.byType(TaskTile);
     expect(tileCheck, findsNWidgets(2));
 
-    // Verify both tiles have the correct titles
+    // // Verify both tiles have the correct titles
     var titleTextFinder =
         find.descendant(of: tileCheck.first, matching: find.byType(Text));
     expect(titleTextFinder, findsOneWidget);
@@ -48,8 +67,8 @@ void main() {
         find.descendant(of: tileCheck.last, matching: find.byType(Text));
     expect(titleTextFinder, findsOneWidget);
 
-    // Tap the filter icon and set top open, list should be length 1 now
-    final filterFinder = find.byType(IconButton);
+    // // Tap the filter icon and set top open, list should be length 1 now
+    final filterFinder = find.byKey(Key('Filter'));
     expect(filterFinder, findsOneWidget);
     await tester.tap(filterFinder);
     await tester.pumpAndSettle();
@@ -62,23 +81,23 @@ void main() {
   });
 
   testWidgets(
-      'This test confirms the following: Produces a task whose title and'
+      'This test confirms the following: Produces a task whose title and '
       'description match the ones entered by the user, also verifies edit buttons'
       'and proper updating of the task', (tester) async {
     await tester.pumpWidget(testWidget());
 
-    await addTask(tester, "Title1", "Open");
+    await addTask(tester, 'Test1', 'Open');
 
-    final taskFinder = find.byType(TaskTile);
-    await tester.tap(taskFinder);
+    Finder titleFinder = find.text("Test1");
+    expect(titleFinder, findsOneWidget);
+
+    await tester.tap(titleFinder);
     await tester.pumpAndSettle();
 
-    Finder titleFinder = find.text("Title1");
     Finder descFinder = find.text("Desc test");
     final statusFinder = find.text("Open");
     final taskTypeFinder = find.text("Primary");
 
-    expect(titleFinder, findsOneWidget);
     expect(descFinder, findsOneWidget);
     expect(statusFinder, findsOneWidget);
     expect(taskTypeFinder, findsOneWidget);
@@ -105,13 +124,34 @@ void main() {
 }
 
 Widget testWidget() {
+  var routerDelegate = BeamerDelegate(
+    locationBuilder: RoutesLocationBuilder(
+      routes: {
+        '/': (context, state, data) => MyTasks(key: UniqueKey()),
+        '/new': (context, state, data) => TaskForm(
+              data: data as List,
+            ),
+        '/task/:id': (context, state, data) {
+          var list = data as List;
+          Task task = list[0];
+          var callback = list[1] as Function;
+          return TaskPage(
+            task: task,
+            callback: callback,
+          );
+        }
+      },
+    ),
+  );
   return MultiProvider(
     providers: [
-      ChangeNotifierProvider(
-        create: (_) => StateInfo(),
+      ChangeNotifierProvider<StateInfo>(
+        create: (_) => MockStateInfo(),
       ),
     ],
-    child: Home(),
+    child: Home(
+      routerDelegate: routerDelegate,
+    ),
   );
 }
 
@@ -143,6 +183,17 @@ Future addTask(WidgetTester tester, String message, String choice) async {
   expect(find.text("Desc test"), findsOneWidget);
 
   buttonFinder = find.byType(ElevatedButton);
+  expect(buttonFinder, findsOneWidget);
   await tester.tap(buttonFinder);
   await tester.pumpAndSettle();
 }
+
+Task get testTask => Task(
+      title: "Test",
+      desc: 'Desc',
+      status: 'Open',
+      lastUpdate: DateTime.now(),
+      related: {},
+      taskType: 'Primary',
+      lastFilter: '',
+    );
