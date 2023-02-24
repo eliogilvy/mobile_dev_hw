@@ -1,6 +1,9 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/classes/state_info.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
+import 'package:flutter_application_1/classes/db_provider.dart';
+import 'package:flutter_application_1/database/firebase_helper.dart';
+import 'package:flutter_application_1/database/sql_db_helper.dart';
 import 'package:flutter_application_1/pages/my_tasks.dart';
 import 'package:flutter_application_1/pages/task_form.dart';
 import 'package:flutter_application_1/pages/task_page.dart';
@@ -46,7 +49,10 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => StateInfo(),
+          create: (context) => AppProvider(
+            local: DBProvider(helper: SQLDatabaseHelper()),
+            shared: DBProvider(helper: FireBaseHelper()),
+          ),
         ),
       ],
       child: Home(

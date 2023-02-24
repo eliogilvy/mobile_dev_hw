@@ -28,7 +28,7 @@ class TaskDb {
   Future _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE TASK (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
       desc TEXT NOT NULL,
       status TEXT NOT NULL,

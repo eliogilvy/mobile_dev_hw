@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/database/task_db_helper.dart';
+import 'package:flutter_application_1/database/sql_db_helper.dart';
 import 'package:flutter_application_1/widgets/add_image.dart';
 import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/stateless/description_box.dart';
@@ -66,7 +66,7 @@ class _TaskPageState extends State<TaskPage> {
                           controller: widget.titleController,
                           edit: widget._editing,
                           updateEdit: updateEdit,
-                          updateTask: updateTask,
+                          refresh: refresh,
                           task: widget.task),
                       ImageButton(
                         task: widget.task,
@@ -188,10 +188,13 @@ class _TaskPageState extends State<TaskPage> {
     setState(() {});
   }
 
-  void updateTask(Task task) async {
-    task.title = widget.titleController.text;
-    task.desc = widget.descController.text;
-    await TaskDatabaseHelper.updateTask(task);
+  // void updateTask(Task task) async {
+  //   task.title = widget.titleController.text;
+  //   task.desc = widget.descController.text;
+  //   await TaskDatabaseHelper.updateTask(task);
+  //   setState(() {});
+  // }
+  void refresh() {
     setState(() {});
   }
 }

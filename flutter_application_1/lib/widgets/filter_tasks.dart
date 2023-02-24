@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../classes/state_info.dart';
+import '../classes/db_provider.dart';
 import '../styles/styles.dart';
 
 class Filter extends StatelessWidget {
@@ -9,7 +9,7 @@ class Filter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<StateInfo>(context);
+    var stateInfo = Provider.of<DBProvider>(context);
     return IconButton(
       icon: Icon(Icons.filter_list_alt),
       color: Styles.buttonBackground(),

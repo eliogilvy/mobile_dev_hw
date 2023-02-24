@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
+import 'package:provider/provider.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
 
 class TaskDisplay extends StatefulWidget {
   final bool edit;
   Function(bool) updateEdit;
-  Function(Task) updateTask;
+  Function refresh;
   final Task task;
   final TextEditingController controller;
   TaskDisplay(
       {super.key,
       required this.edit,
       required this.updateEdit,
-      required this.updateTask,
+      required this.refresh,
       required this.task,
       required this.controller});
 
@@ -23,6 +25,7 @@ class TaskDisplay extends StatefulWidget {
 class _TaskDisplayState extends State<TaskDisplay> {
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AppProvider>(context);
     return !widget.edit
         ? Expanded(
             child: Row(
@@ -39,7 +42,6 @@ class _TaskDisplayState extends State<TaskDisplay> {
                   icon: Icon(Icons.edit),
                   onPressed: () {
                     widget.updateEdit(widget.edit);
-                    widget.updateEdit;
                   },
                 ),
               ],
@@ -62,7 +64,8 @@ class _TaskDisplayState extends State<TaskDisplay> {
                   icon: Icon(Icons.check),
                   onPressed: () {
                     widget.updateEdit(widget.edit);
-                    widget.updateTask(widget.task);
+                    provider.deleteTask(widget.task.id);
+                    widget.refresh();
                   },
                 ),
               ],

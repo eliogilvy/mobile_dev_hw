@@ -1,6 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/classes/state_info.dart';
+import 'package:flutter_application_1/classes/db_provider.dart';
 import 'package:provider/provider.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
@@ -27,6 +27,8 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   bool _recurring = false;
 
+  bool choice = true;
+
   final TextEditingController _titleController = TextEditingController();
 
   final TextEditingController _descController = TextEditingController();
@@ -41,7 +43,7 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StateInfo>(
+    return Consumer<DBProvider>(
       builder: (context, stateInfo, child) {
         return Scaffold(
           backgroundColor: Styles.myBackground(),
@@ -68,44 +70,86 @@ class _TaskFormState extends State<TaskForm> {
                       ),
                       SizedBox(height: 20),
                       if (widget._relationship == "Primary")
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                        Column(
                           children: [
-                            Text(
-                              "Recurring?",
-                              style: Styles.formStyle(Styles.formSize()),
-                            ),
-                            Flexible(
-                              child: RadioListTile<bool>(
-                                activeColor: Styles.buttonBackground(),
-                                title: Text(
-                                  "Yes",
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Local",
                                   style: Styles.formStyle(Styles.formSize()),
                                 ),
-                                value: true,
-                                groupValue: _recurring,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _recurring = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                            Flexible(
-                              child: RadioListTile<bool>(
-                                activeColor: Styles.buttonBackground(),
-                                title: Text(
-                                  "No",
-                                  style: Styles.formStyle(Styles.formSize()),
+                                Flexible(
+                                  child: RadioListTile<bool>(
+                                    activeColor: Styles.buttonBackground(),
+                                    title: Text(
+                                      "Yes",
+                                      style: Styles.formStyle(Styles.formSize()),
+                                    ),
+                                    value: true,
+                                    groupValue: _recurring,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _recurring = value!;
+                                      });
+                                    },
+                                  ),
                                 ),
-                                value: false,
-                                groupValue: _recurring,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _recurring = value!;
-                                  });
-                                },
-                              ),
+                                Flexible(
+                                  child: RadioListTile<bool>(
+                                    activeColor: Styles.buttonBackground(),
+                                    title: Text(
+                                      "No",
+                                      style: Styles.formStyle(Styles.formSize()),
+                                    ),
+                                    value: false,
+                                    groupValue: _recurring,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _recurring = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                
+                                Flexible(
+                                  child: RadioListTile<bool>(
+                                    activeColor: Styles.buttonBackground(),
+                                    title: Text(
+                                      "Local",
+                                      style: Styles.formStyle(Styles.formSize()),
+                                    ),
+                                    value: true,
+                                    groupValue: choice,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        choice = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Flexible(
+                                  child: RadioListTile<bool>(
+                                    activeColor: Styles.buttonBackground(),
+                                    title: Text(
+                                      "Shared",
+                                      style: Styles.formStyle(Styles.formSize()),
+                                    ),
+                                    value: false,
+                                    groupValue: choice,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        choice = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -125,9 +169,9 @@ class _TaskFormState extends State<TaskForm> {
                             if (_recurring == true) {
                               task.taskType = "Recurring";
                             }
-                            stateInfo.addTask(task);
+                            String id = await stateInfo.addTask([task, choice]);
                             if (widget._relatedTask != null) {
-                              task = await stateInfo.getNewTask();
+                              task = await stateInfo.getTask([id, choice]);
                               stateInfo.addRelationship(task,
                                   widget._relatedTask!, widget._relationship);
                             }

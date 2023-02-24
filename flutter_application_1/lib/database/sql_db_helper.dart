@@ -1,23 +1,29 @@
 import 'dart:convert';
 
+import 'package:flutter_application_1/database/abstract_db_helper.dart';
 import 'package:flutter_application_1/database/task_db.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 
 import '../classes/task.dart';
 
-class TaskDatabaseHelper {
+class SQLDatabaseHelper extends AbstractDBHelper {
   static String tableName = "Task";
 
-  static void drop() async {
+  @override
+  void drop() async {
     var database = await TaskDb.instance.database;
     database!.delete(tableName);
   }
 
-  static Future<int> createTask(Task task) async {
+  @override
+  Future<String> createTask(Task task) async {
     var database = await TaskDb.instance.database;
-    return await database!.insert(
+    task.id = Uuid().v4();
+    int id = await database!.insert(
       tableName,
       {
+        'id': task.id,
         'title': task.title,
         'desc': task.desc,
         'status': task.status,
@@ -29,18 +35,11 @@ class TaskDatabaseHelper {
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    return id.toString();
   }
 
-  static Future<Task> getLast() async {
-    var database = await TaskDb.instance.database;
-    List<Map> list =
-        await database!.query(tableName, orderBy: 'id DESC', limit: 1);
-
-    Task task = Task.fromMap(list.first);
-    return task;
-  }
-
-  static Future<List<Task>> getTasks() async {
+  @override
+  Future<List<Task>> getTasks() async {
     var database = await TaskDb.instance.database;
     List<Map> list = await database!.query(
       tableName,
@@ -59,7 +58,8 @@ class TaskDatabaseHelper {
     return tasks;
   }
 
-  static Future<Task> getTask(int id) async {
+  @override
+  Future<Task> getTask(String id) async {
     var database = await TaskDb.instance.database;
     var item = await database!.query(
       tableName,
@@ -71,7 +71,8 @@ class TaskDatabaseHelper {
     return task;
   }
 
-  static Future<List<Task>> getRelatedTasks(Task task) async {
+  @override
+  Future<List<Task>> getRelatedTasks(Task task) async {
     var database = await TaskDb.instance.database;
     List<Task> tasks = [];
     for (var relatedTask in task.related.keys) {
@@ -86,18 +87,20 @@ class TaskDatabaseHelper {
     return tasks;
   }
 
-  static Future<List<Task>> getRelatedTasksWithFilter(List<int> list) async {
+  @override
+  Future<List<Task>> getRelatedTasksWithFilter(List<String> list) async {
     List<Task> tasks = [];
-    {
-      var database = await TaskDb.instance.database;
-      for (int id in list) {
-        tasks.add(await TaskDatabaseHelper.getTask(id));
-      }
+
+    var database = await TaskDb.instance.database;
+    for (String id in list) {
+      tasks.add(await getTask(id));
     }
+
     return tasks;
   }
 
-  static Future<void> updateTask(Task task) async {
+  @override
+  Future<void> updateTask(Task task) async {
     var database = await TaskDb.instance.database;
     await database!.update(
       tableName,
@@ -116,7 +119,8 @@ class TaskDatabaseHelper {
     );
   }
 
-  static Future<void> deleteTask(int id) async {
+  @override
+  Future<void> deleteTask(String id) async {
     var database = await TaskDb.instance.database;
     await database!.delete(
       tableName,
@@ -125,9 +129,10 @@ class TaskDatabaseHelper {
     );
   }
 
-  static Future<List<Task>> filterTasks(String filter) async {
+  @override
+  Future<List<Task>> filterTasks(String filter) async {
     if (filter == "") {
-      return await TaskDatabaseHelper.getTasks();
+      return await getTasks();
     }
     var database = await TaskDb.instance.database;
     List<Map> list = await database!.query(tableName,

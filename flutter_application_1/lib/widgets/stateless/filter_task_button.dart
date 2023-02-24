@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/styles/styles.dart';
 import 'package:provider/provider.dart';
-import '../../classes/state_info.dart';
+import '../../classes/db_provider.dart';
 
 class FilterTasksButton extends StatelessWidget {
   const FilterTasksButton({super.key, required this.callback});
@@ -9,7 +9,7 @@ class FilterTasksButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateInfo = Provider.of<StateInfo>(context, listen: false);
+    final stateInfo = Provider.of<DBProvider>(context, listen: false);
     return Expanded(
       child: Align(
         alignment: Alignment.topLeft,

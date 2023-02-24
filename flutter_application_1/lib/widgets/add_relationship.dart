@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../classes/state_info.dart';
+import '../classes/db_provider.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
 
@@ -89,7 +89,7 @@ class MiniTaskList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateInfo = Provider.of<StateInfo>(context);
+    final stateInfo = Provider.of<DBProvider>(context);
     return Flexible(
       child: FutureBuilder<List<Task>>(
         future: stateInfo.tasks,

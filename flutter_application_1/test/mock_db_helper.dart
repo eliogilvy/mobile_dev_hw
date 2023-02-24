@@ -14,7 +14,7 @@ class MockDatabaseHelper {
     await database!.delete(tableName);
   }
 
-  static Future<int> createTask(Task task) async {
+  static Future<String> createTask(Task task) async {
     var database = await MockDb.instance.database;
     print('adding task');
     return await database!.insert(
@@ -30,7 +30,7 @@ class MockDatabaseHelper {
         'image': task.image,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    ).toString();
   }
 
   static Future<Task> getLast() async {
@@ -61,7 +61,7 @@ class MockDatabaseHelper {
     return tasks;
   }
 
-  static Future<Task> getTask(int id) async {
+  static Future<Task> getTask(String id) async {
     var database = await MockDb.instance.database;
     var item = await database!.query(
       tableName,
@@ -88,10 +88,10 @@ class MockDatabaseHelper {
     return tasks;
   }
 
-  static Future<List<Task>> getRelatedTasksWithFilter(List<int> list) async {
+  static Future<List<Task>> getRelatedTasksWithFilter(List<String> list) async {
     List<Task> tasks = [];
     {
-      for (int id in list) {
+      for (String id in list) {
         tasks.add(await MockDatabaseHelper.getTask(id));
       }
     }
@@ -117,7 +117,7 @@ class MockDatabaseHelper {
     );
   }
 
-  static Future<void> deleteTask(int id) async {
+  static Future<void> deleteTask(String id) async {
     var database = await MockDb.instance.database;
     await database!.delete(
       tableName,

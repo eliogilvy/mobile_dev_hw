@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../classes/state_info.dart';
+import '../classes/db_provider.dart';
 import '../classes/task.dart';
 
 class ImageButton extends StatelessWidget {
@@ -12,7 +12,7 @@ class ImageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<StateInfo>(context);
+    var stateInfo = Provider.of<DBProvider>(context);
     return IconButton(
         onPressed: () {
           _pickImage(stateInfo);

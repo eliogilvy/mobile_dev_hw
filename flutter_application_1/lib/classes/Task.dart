@@ -2,7 +2,7 @@ import 'dart:convert';
 
 //Task
 class Task {
-  int id = 0;
+  String id = '';
   String title = "";
   String desc = "";
   String status = "";

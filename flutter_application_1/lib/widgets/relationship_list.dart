@@ -2,7 +2,7 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../classes/state_info.dart';
+import '../classes/db_provider.dart';
 import '../classes/task.dart';
 
 class RelationshipList extends StatefulWidget {
@@ -18,7 +18,7 @@ class RelationshipList extends StatefulWidget {
 class _RelationshipListState extends State<RelationshipList> {
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<StateInfo>(context, listen: true);
+    var stateInfo = Provider.of<DBProvider>(context, listen: true);
     return Wrap(
       spacing: 8,
       runSpacing: 8,

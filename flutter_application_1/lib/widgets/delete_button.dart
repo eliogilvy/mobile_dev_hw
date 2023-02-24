@@ -1,7 +1,9 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../database/task_db_helper.dart';
+import '../classes/app_provider.dart';
+import '../database/sql_db_helper.dart';
 import '../styles/styles.dart';
 
 class DeleteButton extends StatelessWidget {
@@ -10,11 +12,12 @@ class DeleteButton extends StatelessWidget {
     required this.id,
     required this.callback,
   });
-  final int id;
+  final String id;
   final Function callback;
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AppProvider>(context);
     return IconButton(
       icon: Icon(Icons.delete),
       onPressed: () {
@@ -49,7 +52,7 @@ class DeleteButton extends StatelessWidget {
                     style: Styles.formStyle(Styles.taskSize()),
                   ),
                   onPressed: () {
-                    TaskDatabaseHelper.deleteTask(id);
+                    provider.deleteTask(id);
                     callback();
                     Beamer.of(context).beamBack();
                   },

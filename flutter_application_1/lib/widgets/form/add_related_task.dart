@@ -4,7 +4,7 @@ import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/form/form_components.dart';
 import 'package:provider/provider.dart';
 
-import '../../classes/state_info.dart';
+import '../../classes/db_provider.dart';
 import '../../classes/task.dart';
 
 class AddRelatedTask extends StatelessWidget {
@@ -22,7 +22,7 @@ class AddRelatedTask extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<StateInfo>(context, listen: false);
+    var stateInfo = Provider.of<DBProvider>(context, listen: false);
     return AlertDialog(
       backgroundColor: Styles.myBackground(),
       contentPadding: EdgeInsets.all(0),

@@ -1,6 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/classes/state_info.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
+import 'package:flutter_application_1/classes/db_provider.dart';
 import 'package:flutter_application_1/classes/task.dart';
 import 'package:flutter_application_1/pages/home.dart';
 import 'package:flutter_application_1/pages/my_tasks.dart';
@@ -145,7 +146,7 @@ Widget testWidget() {
   );
   return MultiProvider(
     providers: [
-      ChangeNotifierProvider<StateInfo>(
+      ChangeNotifierProvider<AppProvider>(
         create: (_) => MockStateInfo(),
       ),
     ],
