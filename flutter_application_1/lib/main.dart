@@ -20,7 +20,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   await Auth().signInAnon();
 
   final routerDelegate = BeamerDelegate(

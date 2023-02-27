@@ -64,7 +64,7 @@ class _TaskDisplayState extends State<TaskDisplay> {
                   icon: Icon(Icons.check),
                   onPressed: () {
                     widget.updateEdit(widget.edit);
-                    provider.deleteTask(widget.task);
+                    provider.updateTask(widget.task);
                     widget.refresh(provider);
                   },
                 ),

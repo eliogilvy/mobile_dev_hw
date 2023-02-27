@@ -29,10 +29,11 @@ class FireBaseHelper extends AbstractDBHelper {
     List<Task> tasks = [];
     QuerySnapshot<Map<String, dynamic>> list;
     if (filter == '') {
-      list = await fb.get();
+      list = await fb.where('taskType',
+          whereIn: ['Primary', 'Recurring', 'Alternative']).get();
     } else {
       list = await fb.where('status', isEqualTo: filter).where('taskType',
-          arrayContainsAny: ['Primary', 'Recurring', 'Alternative']).get();
+          whereIn: ['Primary', 'Recurring', 'Alternative']).get();
     }
     for (var task in list.docs) {
       tasks.add(Task.fromMap(_addId(task.data(), task.id)));
@@ -79,11 +80,17 @@ class FireBaseHelper extends AbstractDBHelper {
 
   @override
   Future<void> updateTask(Task task) async {
-    fb.doc(task.id).update(_removeId(task.toMap()));
+    final doc = fb.doc(task.id);
+    final snapshot = await doc.get();
+    if (!snapshot.exists) {
+      print('doesn"t exist');
+    }
+    await doc.update(_removeId(task.toMap()));
   }
 
   Map<String, dynamic> _removeId(Map<String, dynamic> map) {
-    return Map<String, dynamic>.from(map)..remove('id');
+    map.remove('id');
+    return map;
   }
 
   Map<String, dynamic> _addId(Map<String, dynamic> map, String id) {

@@ -20,7 +20,7 @@ class SQLDatabaseHelper extends AbstractDBHelper {
   Future<String> createTask(Task task) async {
     var database = await TaskDb.instance.database;
     task.id = Uuid().v4();
-    int id = await database!.insert(
+    await database!.insert(
       tableName,
       {
         'id': task.id,
@@ -35,7 +35,7 @@ class SQLDatabaseHelper extends AbstractDBHelper {
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    return id.toString();
+    return task.id;
   }
 
   @override
@@ -99,7 +99,6 @@ class SQLDatabaseHelper extends AbstractDBHelper {
 
   @override
   Future<void> updateTask(Task task) async {
-    print('updating ${task.id}');
     var database = await TaskDb.instance.database;
     await database!.update(
       tableName,

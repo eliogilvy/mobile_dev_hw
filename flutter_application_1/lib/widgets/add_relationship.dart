@@ -91,38 +91,36 @@ class MiniTaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appInfo = Provider.of<AppProvider>(context);
-    return Flexible(
-      child: FutureBuilder<List<Task>>(
-        future: appInfo.tasks,
-        builder: (context, snapshot) {
-          if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return Center(
-              child: Text('Nothing to see...'),
-            );
-          }
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return snapshot.data![index].id != task.id
-                  ? ListTile(
-                      title: Text(
-                        snapshot.data![index].title,
-                        style: Styles.titleStyle(
-                          Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        appInfo.addRelationship(
-                            snapshot.data![index], task, relationship);
-                        callback();
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  : Container();
-            },
+    return FutureBuilder<List<Task>>(
+      future: appInfo.sharedOrLocal(task),
+      builder: (context, snapshot) {
+        if (snapshot.data == null || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text('Nothing to see...'),
           );
-        },
-      ),
+        }
+        return ListView.builder(
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            return snapshot.data![index].id != task.id
+                ? ListTile(
+                    title: Text(
+                      snapshot.data![index].title,
+                      style: Styles.titleStyle(
+                        Colors.white,
+                      ),
+                    ),
+                    onTap: () {
+                      appInfo.addRelationship(
+                          snapshot.data![index], task, relationship);
+                      callback();
+                      Navigator.of(context).pop();
+                    },
+                  )
+                : Container();
+          },
+        );
+      },
     );
   }
 }

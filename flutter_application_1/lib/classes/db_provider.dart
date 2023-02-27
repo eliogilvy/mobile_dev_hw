@@ -38,13 +38,13 @@ class DBProvider extends AbstractDBProvider {
   }
 
   @override
-  void updateTask(Task task) async {
+  Future<void> updateTask(Task task) async {
     task.lastUpdate = DateTime.now();
     await helper.updateTask(task);
   }
 
   @override
-  void addRelationship(Task task, Task relatedTask, String relationship) async {
+  Future<void> addRelationship(Task task, Task relatedTask, String relationship) async {
     relatedTask.related[task.id.toString()] = relationship;
     task.related[relatedTask.id.toString()] = relationshipMap[relationship]!;
     await helper.updateTask(relatedTask);

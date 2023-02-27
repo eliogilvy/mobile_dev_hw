@@ -1,7 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/app_provider.dart';
-import 'package:flutter_application_1/classes/db_provider.dart';
 import 'package:provider/provider.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
@@ -113,43 +112,44 @@ class _TaskFormState extends State<TaskForm> {
                             ),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: RadioListTile<bool>(
-                                activeColor: Styles.buttonBackground(),
-                                title: Text(
-                                  "Local",
-                                  style: Styles.formStyle(Styles.formSize()),
+                        if (widget._relatedTask == null)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: RadioListTile<bool>(
+                                  activeColor: Styles.buttonBackground(),
+                                  title: Text(
+                                    "Local",
+                                    style: Styles.formStyle(Styles.formSize()),
+                                  ),
+                                  value: false,
+                                  groupValue: shared,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      shared = value!;
+                                    });
+                                  },
                                 ),
-                                value: false,
-                                groupValue: shared,
-                                onChanged: (value) {
-                                  setState(() {
-                                    shared = value!;
-                                  });
-                                },
                               ),
-                            ),
-                            Flexible(
-                              child: RadioListTile<bool>(
-                                activeColor: Styles.buttonBackground(),
-                                title: Text(
-                                  "Shared",
-                                  style: Styles.formStyle(Styles.formSize()),
+                              Flexible(
+                                child: RadioListTile<bool>(
+                                  activeColor: Styles.buttonBackground(),
+                                  title: Text(
+                                    "Shared",
+                                    style: Styles.formStyle(Styles.formSize()),
+                                  ),
+                                  value: true,
+                                  groupValue: shared,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      shared = value!;
+                                    });
+                                  },
                                 ),
-                                value: true,
-                                groupValue: shared,
-                                onChanged: (value) {
-                                  setState(() {
-                                    shared = value!;
-                                  });
-                                },
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                       ],
                     ),
                   ElevatedButton(
@@ -157,6 +157,9 @@ class _TaskFormState extends State<TaskForm> {
                         backgroundColor: Styles.buttonBackground()),
                     onPressed: () async {
                       if (taskForm.currentState!.validate()) {
+                        if (widget._relatedTask != null) {
+                          shared = widget._relatedTask!.shared;
+                        }
                         Task task = Task(
                           title: _titleController.text,
                           desc: _descController.text,
@@ -169,8 +172,7 @@ class _TaskFormState extends State<TaskForm> {
                         if (_recurring == true) {
                           task.taskType = "Recurring";
                         }
-                        String id = await appInfo.addTask(task);
-                        task.id = id;
+                        await appInfo.addTask(task);
                         if (widget._relatedTask != null) {
                           task = await appInfo.getTask(task);
                           appInfo.addRelationship(

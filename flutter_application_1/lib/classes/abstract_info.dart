@@ -43,8 +43,8 @@ abstract class AbstractDBProvider {
   Future<Task> getTask(Task task);
   Future<String> addTask(Task task);
   Future<dynamic> filterTasks(String filter);
-  void updateTask(Task task);
-  void addRelationship(Task task, Task relatedTask, String relationship);
+  Future<void> updateTask(Task task);
+  Future<void> addRelationship(Task task, Task relatedTask, String relationship);
   Future<List<Task>> getRelatedTasks(Task task, String relationship);
   List<String> relatedTaskDropdown() {
     return relationshipList

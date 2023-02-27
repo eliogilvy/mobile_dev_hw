@@ -9,8 +9,14 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
   List<Task>? _taskList;
 
   @override
-  void addRelationship(Task task, Task relatedTask, String relationship) {
-    local.addRelationship(task, relatedTask, relationship);
+  Future<void> addRelationship(
+      Task task, Task relatedTask, String relationship) async {
+    if (!task.shared) {
+      await local.addRelationship(task, relatedTask, relationship);
+    } else {
+      await shared.addRelationship(task, relatedTask, relationship);
+    }
+
     notifyListeners();
   }
 
@@ -26,13 +32,20 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
     return id;
   }
 
+  Future<List<Task>> sharedOrLocal(Task task) async {
+    if (!task.shared) {
+      return await local.tasks;
+    } else {
+      return await shared.tasks;
+    }
+  }
+
   @override
   Future<List<Task>> filterTasks(String filter) async {
     var list1 = await local.filterTasks(filter);
     var list2 = await shared.filterTasks(filter);
     list1 += list2;
     _taskList = _filter(list1);
-    notifyListeners();
     return _taskList!;
   }
 
@@ -43,7 +56,11 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
 
   @override
   Future<List<Task>> getRelatedTasks(Task task, String relationship) async {
-    return await local.getRelatedTasks(task, relationship);
+    if (!task.shared) {
+      return await local.getRelatedTasks(task, relationship);
+    } else {
+      return await shared.getRelatedTasks(task, relationship);
+    }
   }
 
   @override
@@ -65,11 +82,10 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
   }
 
   @override
-  void updateTask(Task task) async {
+  Future<void> updateTask(Task task) async {
     if (!task.shared) {
       local.updateTask(task);
     } else {
-      print('updating');
       shared.updateTask(task);
     }
     notifyListeners();
