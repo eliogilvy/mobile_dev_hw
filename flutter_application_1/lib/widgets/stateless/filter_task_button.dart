@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/styles/styles.dart';
 import 'package:provider/provider.dart';
-import '../../classes/db_provider.dart';
+import '../../classes/app_provider.dart';
 
 class FilterTasksButton extends StatelessWidget {
   const FilterTasksButton({super.key, required this.callback});
@@ -9,14 +9,14 @@ class FilterTasksButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateInfo = Provider.of<DBProvider>(context, listen: false);
+    final appInfo = Provider.of<AppProvider>(context, listen: false);
     return Expanded(
       child: Align(
         alignment: Alignment.topLeft,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: List.generate(
-            stateInfo.pluralRelationships.length,
+            appInfo.pluralRelationships.length,
             (i) {
               return TextButton(
                 style: ButtonStyle(
@@ -25,10 +25,10 @@ class FilterTasksButton extends StatelessWidget {
                   ),
                 ),
                 onPressed: (() {
-                  callback(relationship: stateInfo.relationshipsShortened[i]);
+                  callback(relationship: appInfo.relationshipsShortened[i]);
                 }),
                 child: Text(
-                  stateInfo.pluralRelationships[i],
+                  appInfo.pluralRelationships[i],
                   style: Styles.formStyle(12),
                 ),
               );

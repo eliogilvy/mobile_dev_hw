@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/stateless/task_tile.dart';
 import 'package:provider/provider.dart';
 
-import '../classes/db_provider.dart';
+import '../classes/app_provider.dart';
 import '../classes/task.dart';
 
 class TaskList extends StatefulWidget {
@@ -19,10 +19,10 @@ class TaskList extends StatefulWidget {
 class _TaskListState extends State<TaskList> {
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<DBProvider>(context, listen: true);
+    var appInfo = Provider.of<AppProvider>(context, listen: true);
     return Flexible(
       child: FutureBuilder<List<Task>>(
-        future: stateInfo.tasks,
+        future: appInfo.tasks,
         initialData: [],
         builder: (context, snapshot) {
           if (snapshot.data == null || snapshot.data!.isEmpty) {

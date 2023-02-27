@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
-import '../../classes/db_provider.dart';
+import '../../classes/app_provider.dart';
 import '../../classes/task.dart';
 
 class ScanQR extends StatelessWidget {
@@ -15,7 +14,7 @@ class ScanQR extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<DBProvider>(context);
+    var appInfo = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Scan a task!')),
       backgroundColor: Colors.black,
@@ -32,7 +31,7 @@ class ScanQR extends StatelessWidget {
                 final List<Barcode> barcodes = capture.barcodes;
                 Map map = jsonDecode(barcodes.first.rawValue!);
                 Task task = Task.fromMap(map);
-                stateInfo.addTask([task, 'local']);
+                appInfo.addTask(task);
                 Beamer.of(context).beamBack();
               }
               scan = false;

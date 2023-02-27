@@ -1,5 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../classes/db_provider.dart';
@@ -89,10 +90,10 @@ class MiniTaskList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateInfo = Provider.of<DBProvider>(context);
+    final appInfo = Provider.of<AppProvider>(context);
     return Flexible(
       child: FutureBuilder<List<Task>>(
-        future: stateInfo.tasks,
+        future: appInfo.tasks,
         builder: (context, snapshot) {
           if (snapshot.data == null || snapshot.data!.isEmpty) {
             return Center(
@@ -111,7 +112,7 @@ class MiniTaskList extends StatelessWidget {
                         ),
                       ),
                       onTap: () {
-                        stateInfo.addRelationship(
+                        appInfo.addRelationship(
                             snapshot.data![index], task, relationship);
                         callback();
                         Navigator.of(context).pop();

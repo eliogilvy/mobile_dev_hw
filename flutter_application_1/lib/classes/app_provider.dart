@@ -15,12 +15,12 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
   }
 
   @override
-  Future<String> addTask(List params) async {
+  Future<String> addTask(Task task) async {
     String id;
-    if (params[1] == true) {
-      id = await local.addTask(params);
+    if (!task.shared) {
+      id = await local.addTask(task);
     } else {
-      id = await shared.addTask(params);
+      id = await shared.addTask(task);
     }
     notifyListeners();
     return id;
@@ -47,11 +47,11 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
   }
 
   @override
-  Future<Task> getTask(List params) async {
-    if (params[1]) {
-      return await local.getTask(params);
+  Future<Task> getTask(Task task) async {
+    if (!task.shared) {
+      return await local.getTask(task);
     } else {
-      return await shared.getTask(params);
+      return await shared.getTask(task);
     }
   }
 
@@ -59,20 +59,29 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
   Future<List<Task>> get tasks async {
     if (_taskList == null) {
       return await filterTasks('');
-    }
-    else {
+    } else {
       return _taskList!;
     }
   }
 
   @override
-  void updateTask(List params) {
-    // TODO: implement updateTask
+  void updateTask(Task task) async {
+    if (!task.shared) {
+      local.updateTask(task);
+    } else {
+      print('updating');
+      shared.updateTask(task);
+    }
+    notifyListeners();
   }
 
   @override
-  int deleteTask(String id) {
-    // TODO: implement deleteTask
-    throw UnimplementedError();
+  void deleteTask(Task task) async {
+    if (!task.shared) {
+      local.deleteTask(task);
+    } else {
+      shared.deleteTask(task);
+    }
+    notifyListeners();
   }
 }

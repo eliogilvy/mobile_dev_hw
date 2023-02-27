@@ -196,5 +196,6 @@ Task get testTask => Task(
       lastUpdate: DateTime.now(),
       related: {},
       taskType: 'Primary',
+      shared: false,
       lastFilter: '',
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
 import 'package:provider/provider.dart';
-import '../../classes/db_provider.dart';
 import '../../classes/task.dart';
 import '../../styles/styles.dart';
 
@@ -13,7 +13,7 @@ class UpdateTaskStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateInfo = Provider.of<DBProvider>(context, listen: false);
+    final appInfo = Provider.of<AppProvider>(context, listen: false);
     return IconButton(
       icon: Icon(Icons.edit),
       onPressed: () {
@@ -23,11 +23,11 @@ class UpdateTaskStatus extends StatelessWidget {
             return SimpleDialog(
               title: const Text('Update status'),
               children: [
-                for (String status in stateInfo.status)
+                for (String status in appInfo.status)
                   SimpleDialogOption(
                     onPressed: () {
                       task.status = status;
-                      stateInfo.updateTask([task]);
+                      appInfo.updateTask(task);
                       callback();
                       Navigator.pop(context);
                     },

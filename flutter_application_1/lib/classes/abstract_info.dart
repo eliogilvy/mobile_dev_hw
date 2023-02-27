@@ -40,10 +40,10 @@ abstract class AbstractDBProvider {
       relationshipPluralList.keys.toList();
 
   Future<List<Task>> get tasks;
-  Future<Task> getTask(List params);
-  Future<String> addTask(List params);
+  Future<Task> getTask(Task task);
+  Future<String> addTask(Task task);
   Future<dynamic> filterTasks(String filter);
-  void updateTask(List params);
+  void updateTask(Task task);
   void addRelationship(Task task, Task relatedTask, String relationship);
   Future<List<Task>> getRelatedTasks(Task task, String relationship);
   List<String> relatedTaskDropdown() {
@@ -52,5 +52,5 @@ abstract class AbstractDBProvider {
         .toList();
   }
 
-  int deleteTask(String id);
+  void deleteTask(Task task);
 }

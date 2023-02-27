@@ -41,7 +41,7 @@ class SQLDatabaseHelper extends AbstractDBHelper {
   @override
   Future<List<Task>> getTasks() async {
     var database = await TaskDb.instance.database;
-    List<Map> list = await database!.query(
+    List<Map<String, dynamic>> list = await database!.query(
       tableName,
       where: 'taskType = ? OR taskType = ? OR taskType = ?',
       whereArgs: ['Primary', 'Recurring', 'Alternative'],
@@ -50,8 +50,8 @@ class SQLDatabaseHelper extends AbstractDBHelper {
 
     List<Task> tasks = [];
 
-    for (var element in list) {
-      var task = Task.fromMap(element);
+    for (var item in list) {
+      var task = Task.fromMap(_intToBool(item));
       tasks.add(task);
     }
 
@@ -66,7 +66,7 @@ class SQLDatabaseHelper extends AbstractDBHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    var task = Task.fromMap(item.first);
+    var task = Task.fromMap(_intToBool(item.first));
 
     return task;
   }
@@ -82,7 +82,7 @@ class SQLDatabaseHelper extends AbstractDBHelper {
         whereArgs: [relatedTask],
       );
 
-      tasks.add(Task.fromMap(item.first));
+      tasks.add(Task.fromMap(_intToBool(item.first)));
     }
     return tasks;
   }
@@ -90,8 +90,6 @@ class SQLDatabaseHelper extends AbstractDBHelper {
   @override
   Future<List<Task>> getRelatedTasksWithFilter(List<String> list) async {
     List<Task> tasks = [];
-
-    var database = await TaskDb.instance.database;
     for (String id in list) {
       tasks.add(await getTask(id));
     }
@@ -101,6 +99,7 @@ class SQLDatabaseHelper extends AbstractDBHelper {
 
   @override
   Future<void> updateTask(Task task) async {
+    print('updating ${task.id}');
     var database = await TaskDb.instance.database;
     await database!.update(
       tableName,
@@ -146,5 +145,15 @@ class SQLDatabaseHelper extends AbstractDBHelper {
     }
 
     return tasks;
+  }
+
+  Map<String, dynamic> _intToBool(Map<String, dynamic> map) {
+    var newMap = Map<String, dynamic>.from(map);
+    if (newMap['shared'] == 0) {
+      newMap['shared'] = false;
+    } else {
+      newMap['shared'] = true;
+    }
+    return newMap;
   }
 }

@@ -67,12 +67,11 @@ class MockStateInfo extends Mock with ChangeNotifier implements AppProvider {
   }
 
   @override
-  Future<Task> getTask(List params) async =>
-      await MockDatabaseHelper.getTask(params[0]);
+  Future<Task> getTask(Task task) async =>
+      await MockDatabaseHelper.getTask(task.id);
 
   @override
-  Future<String> addTask(List params) async {
-    Task task = params[0];
+  Future<String> addTask(Task task) async {
     String id = await MockDatabaseHelper.createTask(task);
     print("task $id");
     notifyListeners();
@@ -86,8 +85,7 @@ class MockStateInfo extends Mock with ChangeNotifier implements AppProvider {
   }
 
   @override
-  void updateTask(List params) async {
-    Task task = params[0];
+  void updateTask(Task task) async {
     task.lastUpdate = DateTime.now();
     await MockDatabaseHelper.updateTask(task);
     notifyListeners();

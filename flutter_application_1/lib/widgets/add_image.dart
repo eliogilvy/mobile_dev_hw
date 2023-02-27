@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../classes/db_provider.dart';
@@ -12,15 +13,15 @@ class ImageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<DBProvider>(context);
+    var appInfo = Provider.of<AppProvider>(context);
     return IconButton(
         onPressed: () {
-          _pickImage(stateInfo);
+          _pickImage(appInfo);
         },
         icon: Icon(Icons.image));
   }
 
-  void _pickImage(stateInfo) async {
+  void _pickImage(AppProvider appInfo) async {
     XFile? image;
     try {
       image = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -29,7 +30,7 @@ class ImageButton extends StatelessWidget {
         return;
       }
       task.image = image.path;
-      stateInfo.updateTask(task);
+      appInfo.updateTask(task);
       callback();
     } on PlatformException catch (e) {
       print("error");

@@ -7,7 +7,7 @@ import '../styles/styles.dart';
 class TaskDisplay extends StatefulWidget {
   final bool edit;
   Function(bool) updateEdit;
-  Function refresh;
+  Function(AppProvider) refresh;
   final Task task;
   final TextEditingController controller;
   TaskDisplay(
@@ -64,8 +64,8 @@ class _TaskDisplayState extends State<TaskDisplay> {
                   icon: Icon(Icons.check),
                   onPressed: () {
                     widget.updateEdit(widget.edit);
-                    provider.deleteTask(widget.task.id);
-                    widget.refresh();
+                    provider.deleteTask(widget.task);
+                    widget.refresh(provider);
                   },
                 ),
               ],

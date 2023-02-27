@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
 import 'package:flutter_application_1/styles/styles.dart';
 import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/form/form_components.dart';
 import 'package:provider/provider.dart';
 
-import '../../classes/db_provider.dart';
 import '../../classes/task.dart';
 
 class AddRelatedTask extends StatelessWidget {
@@ -22,7 +22,7 @@ class AddRelatedTask extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<DBProvider>(context, listen: false);
+    var appInfo = Provider.of<AppProvider>(context, listen: false);
     return AlertDialog(
       backgroundColor: Styles.myBackground(),
       contentPadding: EdgeInsets.all(0),
@@ -38,7 +38,7 @@ class AddRelatedTask extends StatelessWidget {
                 FormComponents.buildDropdown(
                   context,
                   _selectedRelationship,
-                  stateInfo.relatedTaskDropdown(),
+                  appInfo.relatedTaskDropdown(),
                   "Select a relationship",
                   _updateRelationship,
                 ),

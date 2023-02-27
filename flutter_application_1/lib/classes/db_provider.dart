@@ -22,11 +22,10 @@ class DBProvider extends AbstractDBProvider {
   }
 
   @override
-  Future<Task> getTask(List params) async => await helper.getTask(params[0]);
+  Future<Task> getTask(Task task) async => await helper.getTask(task.id);
 
   @override
-  Future<String> addTask(List params) async {
-    Task task = params[0];
+  Future<String> addTask(Task task) async {
     String id = await helper.createTask(task);
     print("task $id");
     return id;
@@ -39,8 +38,7 @@ class DBProvider extends AbstractDBProvider {
   }
 
   @override
-  void updateTask(List params) async {
-    Task task = params[0];
+  void updateTask(Task task) async {
     task.lastUpdate = DateTime.now();
     await helper.updateTask(task);
   }
@@ -68,8 +66,7 @@ class DBProvider extends AbstractDBProvider {
   }
 
   @override
-  int deleteTask(String id) {
-    // TODO: implement deleteTask
-    throw UnimplementedError();
+  void deleteTask(Task task) async {
+    return await helper.deleteTask(task.id);
   }
 }

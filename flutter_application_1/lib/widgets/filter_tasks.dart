@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/classes/app_provider.dart';
 import 'package:provider/provider.dart';
 import '../classes/db_provider.dart';
 import '../styles/styles.dart';
@@ -9,7 +10,7 @@ class Filter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var stateInfo = Provider.of<DBProvider>(context);
+    var appInfo = Provider.of<AppProvider>(context);
     return IconButton(
       icon: Icon(Icons.filter_list_alt),
       color: Styles.buttonBackground(),
@@ -26,7 +27,7 @@ class Filter extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      stateInfo.filterTasks("");
+                      appInfo.filterTasks("");
                       callback();
                       Navigator.of(context).pop();
                     },
@@ -38,10 +39,10 @@ class Filter extends StatelessWidget {
                 ],
               ),
               children: <Widget>[
-                for (String status in stateInfo.status)
+                for (String status in appInfo.status)
                   SimpleDialogOption(
                     onPressed: () {
-                      stateInfo.filterTasks(status);
+                      appInfo.filterTasks(status);
                       callback();
                       Navigator.pop(context);
                     },

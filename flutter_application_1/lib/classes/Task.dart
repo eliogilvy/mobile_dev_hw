@@ -11,6 +11,7 @@ class Task {
   String taskType = "";
   String lastFilter = "";
   String? image;
+  bool shared = false;
   Task({
     required this.title,
     required this.desc,
@@ -18,6 +19,7 @@ class Task {
     required this.lastUpdate,
     required this.taskType,
     required this.related,
+    required this.shared,
     this.lastFilter = "",
     this.image,
   });
@@ -30,6 +32,7 @@ class Task {
       'status': status,
       'lastUpdate': lastUpdate.millisecondsSinceEpoch.toString(),
       'related': related.toString(),
+      'shared': shared,
       'taskType': taskType,
       'lastFilter': lastFilter,
       'image': image
@@ -46,6 +49,7 @@ class Task {
       'related': {}.toString(),
       'taskType': taskType,
       'lastFilter': '',
+      'shared': shared,
     };
   }
 
@@ -58,6 +62,7 @@ class Task {
         DateTime.fromMillisecondsSinceEpoch(int.parse(map['lastUpdate']!));
     _relatedFromMap(Map<String, String>.from(json.decode(map['related']!)));
     taskType = map['taskType']!;
+    shared = map['shared'];
     lastFilter = map['lastFilter']!;
     try {
       image = map['image']!;

@@ -34,6 +34,7 @@ class TaskDb {
       status TEXT NOT NULL,
       lastUpdate TEXT NOT NULL,
       related TEXT,
+      shared INTEGER NOT NULL DEFAULT 0,
       taskType TEXT NOT NULL,
       lastFilter TEXT,
       image TEXT)

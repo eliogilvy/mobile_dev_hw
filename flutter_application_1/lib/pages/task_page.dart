@@ -2,15 +2,12 @@ import 'dart:io';
 
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_application_1/database/sql_db_helper.dart';
 import 'package:flutter_application_1/widgets/add_image.dart';
-import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/stateless/description_box.dart';
 import 'package:flutter_application_1/widgets/task_display_or_edit.dart';
 import 'package:flutter_application_1/widgets/task_image.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import '../classes/app_provider.dart';
 import '../classes/task.dart';
 import '../styles/styles.dart';
 import '../widgets/delete_button.dart';
@@ -66,14 +63,14 @@ class _TaskPageState extends State<TaskPage> {
                           controller: widget.titleController,
                           edit: widget._editing,
                           updateEdit: updateEdit,
-                          refresh: refresh,
+                          refresh: _update,
                           task: widget.task),
                       ImageButton(
                         task: widget.task,
                         callback: _refresh,
                       ),
                       DeleteButton(
-                        id: widget.task.id,
+                        task: widget.task,
                         callback: widget.callback,
                       ),
                       IconButton(
@@ -137,7 +134,7 @@ class _TaskPageState extends State<TaskPage> {
                                     ),
                                     UpdateTaskStatus(
                                       task: widget.task,
-                                      callback: _refresh,
+                                      callback: refresh,
                                     ),
                                   ],
                                 ),
@@ -188,13 +185,13 @@ class _TaskPageState extends State<TaskPage> {
     setState(() {});
   }
 
-  // void updateTask(Task task) async {
-  //   task.title = widget.titleController.text;
-  //   task.desc = widget.descController.text;
-  //   await TaskDatabaseHelper.updateTask(task);
-  //   setState(() {});
-  // }
   void refresh() {
     setState(() {});
+  }
+
+  void _update(AppProvider appProvider) {
+    widget.task.title = widget.titleController.text;
+    widget.task.desc = widget.descController.text;
+    appProvider.updateTask(widget.task);
   }
 }

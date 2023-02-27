@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../classes/app_provider.dart';
+import '../classes/task.dart';
 import '../database/sql_db_helper.dart';
 import '../styles/styles.dart';
 
 class DeleteButton extends StatelessWidget {
   const DeleteButton({
     super.key,
-    required this.id,
+    required this.task,
     required this.callback,
   });
-  final String id;
+  final Task task;
   final Function callback;
 
   @override
@@ -52,7 +53,7 @@ class DeleteButton extends StatelessWidget {
                     style: Styles.formStyle(Styles.taskSize()),
                   ),
                   onPressed: () {
-                    provider.deleteTask(id);
+                    provider.deleteTask(task);
                     callback();
                     Beamer.of(context).beamBack();
                   },
