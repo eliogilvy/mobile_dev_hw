@@ -8,6 +8,7 @@ import 'package:flutter_application_1/pages/my_tasks.dart';
 import 'package:flutter_application_1/pages/task_form.dart';
 import 'package:flutter_application_1/pages/task_page.dart';
 import 'package:flutter_application_1/widgets/stateless/scan_qr.dart';
+import 'package:go_router/go_router.dart';
 import 'classes/auth.dart';
 import 'classes/task.dart';
 import 'pages/home.dart';
@@ -22,10 +23,43 @@ void main() async {
   );
   await Auth().signInAnon();
 
+  final router = GoRouter(
+    routes: [
+      GoRoute(
+        name: 'home',
+        path: '/',
+        builder: (context, state) => MyTasks(),
+        routes: [
+          GoRoute(
+            name: 'new',
+            path: 'new',
+            builder: (context, state) => TaskForm(data: state.extra as List),
+          ),
+          GoRoute(
+            name: 'task',
+            path: 'task/:id',
+            builder: (context, state) {
+              var list = state.extra as List;
+              return TaskPage(
+                task: list[0] as Task,
+                callback: list[1] as Function,
+              );
+            },
+          ),
+          GoRoute(
+            name: 'scan',
+            path: 'scan',
+            builder: (context, state) => ScanQR(),
+          )
+        ],
+      ),
+    ],
+  );
+
   final routerDelegate = BeamerDelegate(
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state, data) => MyTasks(key: UniqueKey()),
+        '/': (context, state, data) => MyTasks(),
         '/new': (context, state, data) => TaskForm(
               data: data as List,
             ),
@@ -33,9 +67,13 @@ void main() async {
           var list = data as List;
           Task task = list[0];
           var callback = list[1] as Function;
-          return TaskPage(
-            task: task,
-            callback: callback,
+          return BeamPage(
+            key: ValueKey(task.id),
+            type: BeamPageType.slideTransition,
+            child: TaskPage(
+              task: task,
+              callback: callback,
+            ),
           );
         },
         '/scan': (context, state, data) {
@@ -55,7 +93,7 @@ void main() async {
         ),
       ],
       child: Home(
-        routerDelegate: routerDelegate,
+        router: router,
       ),
     ),
   );

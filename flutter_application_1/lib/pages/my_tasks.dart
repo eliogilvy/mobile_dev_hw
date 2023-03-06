@@ -1,9 +1,9 @@
-import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/stateless/qr_button.dart';
+import 'package:go_router/go_router.dart';
 import '../classes/auth.dart';
-import '../styles/styles.dart';
+import '../widgets/styles/styles.dart';
 import '../widgets/filter_tasks.dart';
 import '../widgets/task_list.dart';
 
@@ -16,7 +16,7 @@ class MyTasks extends StatefulWidget {
 
 class _MyTasksState extends State<MyTasks> with WidgetsBindingObserver {
   final User? user = Auth().user;
-  
+
   @override
   void initState() {
     super.initState();
@@ -83,10 +83,11 @@ class _MyTasksState extends State<MyTasks> with WidgetsBindingObserver {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Beamer.of(context).beamToNamed(
-            '/new',
-            data: ["Primary", null, _refresh],
-          );
+          // Beamer.of(context).beamToNamed(
+          //   '/new',
+          //   data: ["Primary", null, _refresh],
+          // );
+          context.goNamed('new', extra: ["Primary", null, _refresh]);
         },
         backgroundColor: Styles.buttonBackground(),
         child: Icon(

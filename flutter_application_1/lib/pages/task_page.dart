@@ -1,15 +1,13 @@
-import 'dart:io';
-
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/add_image.dart';
 import 'package:flutter_application_1/widgets/stateless/description_box.dart';
 import 'package:flutter_application_1/widgets/task_display_or_edit.dart';
 import 'package:flutter_application_1/widgets/task_image.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../classes/app_provider.dart';
 import '../classes/task.dart';
-import '../styles/styles.dart';
+import '../widgets/styles/styles.dart';
 import '../widgets/delete_button.dart';
 import '../widgets/relationship_list.dart';
 import '../widgets/stateless/update_task.dart';
@@ -54,7 +52,6 @@ class _TaskPageState extends State<TaskPage> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,10 +62,11 @@ class _TaskPageState extends State<TaskPage> {
                           updateEdit: updateEdit,
                           refresh: _update,
                           task: widget.task),
-                      ImageButton(
-                        task: widget.task,
-                        callback: _refresh,
-                      ),
+                      if (!widget.task.shared)
+                        ImageButton(
+                          task: widget.task,
+                          callback: _refresh,
+                        ),
                       DeleteButton(
                         task: widget.task,
                         callback: widget.callback,
@@ -76,7 +74,8 @@ class _TaskPageState extends State<TaskPage> {
                       IconButton(
                         onPressed: () {
                           widget.callback();
-                          Beamer.of(context).beamToNamed('/');
+
+                          context.pop();
                         },
                         icon: Icon(Icons.close),
                       ),
@@ -118,11 +117,11 @@ class _TaskPageState extends State<TaskPage> {
                             child: RelationshipList(
                               task: widget.task,
                               relationship: widget._relationship,
+                              callback: widget.callback,
                             ),
                           ),
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Align(
                                 alignment: Alignment.bottomLeft,
@@ -139,10 +138,13 @@ class _TaskPageState extends State<TaskPage> {
                                   ],
                                 ),
                               ),
-                              Text(
-                                DateFormat('MM/dd/yy h:mm a')
-                                    .format(widget.task.lastUpdate),
-                                style: Styles.taskStyle(15.0),
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  DateFormat('MM/dd/yy h:mm a')
+                                      .format(widget.task.lastUpdate),
+                                  style: Styles.taskStyle(15.0),
+                                ),
                               ),
                             ],
                           ),

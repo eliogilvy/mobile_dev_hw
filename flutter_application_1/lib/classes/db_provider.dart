@@ -44,7 +44,8 @@ class DBProvider extends AbstractDBProvider {
   }
 
   @override
-  Future<void> addRelationship(Task task, Task relatedTask, String relationship) async {
+  Future<void> addRelationship(
+      Task task, Task relatedTask, String relationship) async {
     relatedTask.related[task.id.toString()] = relationship;
     task.related[relatedTask.id.toString()] = relationshipMap[relationship]!;
     await helper.updateTask(relatedTask);
@@ -53,7 +54,6 @@ class DBProvider extends AbstractDBProvider {
 
   @override
   Future<List<Task>> getRelatedTasks(Task task, String relationship) async {
-    print(task.related);
     List<String> related = [];
     task.related.forEach(
       (key, value) {

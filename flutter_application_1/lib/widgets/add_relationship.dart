@@ -1,11 +1,9 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/app_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
-import '../classes/db_provider.dart';
 import '../classes/task.dart';
-import '../styles/styles.dart';
+import 'styles/styles.dart';
 
 class AddRelationship extends StatelessWidget {
   const AddRelationship(
@@ -28,13 +26,10 @@ class AddRelationship extends StatelessWidget {
             Column(
               children: [
                 IconButton(
-                  icon: Icon(Icons.add),
-                  color: Styles.buttonBackground(),
-                  onPressed: () => Beamer.of(context).beamToNamed(
-                    '/new',
-                    data: [relationship, task, callback],
-                  ),
-                ),
+                    icon: Icon(Icons.add),
+                    color: Styles.buttonBackground(),
+                    onPressed: () => context
+                        .goNamed('new', extra: [relationship, task, callback])),
                 Text(
                   "Create new task",
                   style: Styles.formStyle(Styles.formSize()),
@@ -111,10 +106,13 @@ class MiniTaskList extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      appInfo.addRelationship(
-                          snapshot.data![index], task, relationship);
-                      callback();
-                      Navigator.of(context).pop();
+                      appInfo
+                          .addRelationship(
+                              snapshot.data![index], task, relationship)
+                          .then((value) {
+                        callback();
+                        Navigator.of(context).pop();
+                      });
                     },
                   )
                 : Container();

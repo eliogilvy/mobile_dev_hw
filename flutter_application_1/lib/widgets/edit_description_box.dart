@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../classes/task.dart';
-import '../styles/styles.dart';
+import 'styles/styles.dart';
 
 class EditDescriptionBox extends StatefulWidget {
   const EditDescriptionBox(

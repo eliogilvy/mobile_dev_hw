@@ -120,7 +120,16 @@ class SQLDatabaseHelper extends AbstractDBHelper {
   @override
   Future<void> deleteTask(String id) async {
     var database = await TaskDb.instance.database;
-    await database!.delete(
+    var list =
+        await database!.query(tableName, where: 'id = ?', whereArgs: [id]);
+    Task task = Task.fromMap(list.first);
+    for (var relatedId in task.related.keys) {
+      Task t = await getTask(relatedId);
+      t.related.remove(id);
+      await updateTask(t);
+    }
+
+    await database.delete(
       tableName,
       where: 'id = ?',
       whereArgs: [id],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/edit_description_box.dart';
 
 import '../../classes/task.dart';
-import '../../styles/styles.dart';
+import '../styles/styles.dart';
 
 class DescriptionBox extends StatelessWidget {
   const DescriptionBox(

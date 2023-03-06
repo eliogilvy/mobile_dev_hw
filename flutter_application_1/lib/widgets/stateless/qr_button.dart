@@ -1,6 +1,6 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import '../../styles/styles.dart';
+import 'package:go_router/go_router.dart';
+import '../styles/styles.dart';
 
 class QRButton extends StatelessWidget {
   const QRButton({super.key});
@@ -10,7 +10,7 @@ class QRButton extends StatelessWidget {
     return IconButton(
       tooltip: 'Scan a QR code',
       onPressed: () {
-        Beamer.of(context).beamToNamed('/scan');
+        context.goNamed('scan');
       },
       icon: Icon(
         Icons.qr_code,

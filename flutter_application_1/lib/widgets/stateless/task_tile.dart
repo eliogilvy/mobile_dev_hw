@@ -1,7 +1,7 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/styles/styles.dart';
+import 'package:flutter_application_1/widgets/styles/styles.dart';
 import 'package:flutter_application_1/widgets/stateless/qr_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../classes/task.dart';
 
@@ -16,11 +16,13 @@ class TaskTile extends StatelessWidget {
       padding: const EdgeInsets.all(4.0),
       child: ListTile(
         onLongPress: () {
-          showDialog(context: context, builder: ((context) => QRDialog(task: task)));
+          showDialog(
+              context: context, builder: ((context) => QRDialog(task: task)));
         },
         onTap: () {
-          Beamer.of(context)
-              .beamToNamed('/task/${task.id}', data: [task, callback]);
+          // context.beamToNamed('/task/${task.id}', data: [task, callback]);
+          context.goNamed('task',
+              params: {'id': task.id}, extra: [task, callback]);
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),

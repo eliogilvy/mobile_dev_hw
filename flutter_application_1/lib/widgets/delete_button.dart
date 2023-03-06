@@ -1,11 +1,10 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../classes/app_provider.dart';
 import '../classes/task.dart';
-import '../database/sql_db_helper.dart';
-import '../styles/styles.dart';
+import 'styles/styles.dart';
 
 class DeleteButton extends StatelessWidget {
   const DeleteButton({
@@ -55,7 +54,8 @@ class DeleteButton extends StatelessWidget {
                   onPressed: () {
                     provider.deleteTask(task);
                     callback();
-                    Beamer.of(context).beamBack();
+                    context.pop();
+                    context.pop();
                   },
                 ),
               ],

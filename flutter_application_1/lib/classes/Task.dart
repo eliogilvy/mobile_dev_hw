@@ -62,7 +62,11 @@ class Task {
         DateTime.fromMillisecondsSinceEpoch(int.parse(map['lastUpdate']!));
     _relatedFromMap(Map<String, String>.from(json.decode(map['related']!)));
     taskType = map['taskType']!;
-    shared = map['shared'];
+    if (map['shared'] is bool) {
+      shared = map['shared'];
+    } else {
+      shared = map['shared'] == 1;
+    }
     lastFilter = map['lastFilter']!;
     try {
       image = map['image']!;

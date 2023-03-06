@@ -1,19 +1,14 @@
-import 'package:beamer/beamer.dart';
+
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
-  Home({super.key, required this.routerDelegate});
-  final BeamerDelegate routerDelegate;
+  Home({super.key, required this.router});
+  final RouterConfig<Object> router;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: routerDelegate,
-      routeInformationParser: BeamerParser(),
-      backButtonDispatcher: BeamerBackButtonDispatcher(
-        delegate: routerDelegate,
-        alwaysBeamBack: true,
-      ),
+      routerConfig: router,      
     );
   }
 }

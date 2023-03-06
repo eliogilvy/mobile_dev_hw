@@ -1,4 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/abstract_info.dart';
 import 'package:flutter_application_1/classes/task.dart';
 
@@ -7,6 +9,10 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
   AbstractDBProvider local;
   AbstractDBProvider shared;
   List<Task>? _taskList;
+  String currentFilter = '';
+  late final _streamController = StreamController<List<Task>>();
+
+  Stream<List<Task>> get stream => _streamController.stream;
 
   @override
   Future<void> addRelationship(
@@ -16,7 +22,6 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
     } else {
       await shared.addRelationship(task, relatedTask, relationship);
     }
-
     notifyListeners();
   }
 
@@ -42,10 +47,12 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
 
   @override
   Future<List<Task>> filterTasks(String filter) async {
+    currentFilter = filter;
     var list1 = await local.filterTasks(filter);
     var list2 = await shared.filterTasks(filter);
     list1 += list2;
     _taskList = _filter(list1);
+    notifyListeners();
     return _taskList!;
   }
 
@@ -74,20 +81,18 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
 
   @override
   Future<List<Task>> get tasks async {
-    if (_taskList == null) {
-      return await filterTasks('');
-    } else {
-      return _taskList!;
-    }
+    _taskList ??= await filterTasks(currentFilter);
+    return _taskList!;
   }
 
   @override
   Future<void> updateTask(Task task) async {
     if (!task.shared) {
-      local.updateTask(task);
+      await local.updateTask(task);
     } else {
-      shared.updateTask(task);
+      await shared.updateTask(task);
     }
+    _streamController.add(_taskList!);
     notifyListeners();
   }
 
@@ -98,6 +103,7 @@ class AppProvider extends AbstractDBProvider with ChangeNotifier {
     } else {
       shared.deleteTask(task);
     }
+    _streamController.add(_taskList!);
     notifyListeners();
   }
 }

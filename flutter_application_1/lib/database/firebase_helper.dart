@@ -16,6 +16,13 @@ class FireBaseHelper extends AbstractDBHelper {
 
   @override
   Future<void> deleteTask(String id) async {
+    var list = await fb.get();
+    for (var task in list.docs) {
+      Task t = Task.fromMap(_addId(task.data(), task.id));
+      t.related.remove(id);
+      await updateTask(t);
+    }
+
     await fb.doc(id).delete();
   }
 

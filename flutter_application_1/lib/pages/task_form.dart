@@ -1,9 +1,9 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/app_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../classes/task.dart';
-import '../styles/styles.dart';
+import '../widgets/styles/styles.dart';
 import '../widgets/form/form_components.dart';
 
 // ignore: must_be_immutable
@@ -172,14 +172,26 @@ class _TaskFormState extends State<TaskForm> {
                         if (_recurring == true) {
                           task.taskType = "Recurring";
                         }
-                        await appInfo.addTask(task);
+                        task.id = await appInfo.addTask(task);
                         if (widget._relatedTask != null) {
                           task = await appInfo.getTask(task);
-                          appInfo.addRelationship(
+                          await appInfo.addRelationship(
                               task, widget._relatedTask!, widget._relationship);
+                          if (context.mounted) {
+                            // context.popToNamed(
+                            //     '/task/${widget._relatedTask!.id}',
+                            //     data: [widget._relatedTask!, widget.callback!]);
+                            context.goNamed(
+                              'task',
+                              params: {'id': widget._relatedTask!.id},
+                              extra: [widget._relatedTask!, widget.callback],
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            context.pop();
+                          }
                         }
-                        widget.callback!();
-                        Beamer.of(context).beamToNamed('/');
                       }
                     },
                     child: Text(

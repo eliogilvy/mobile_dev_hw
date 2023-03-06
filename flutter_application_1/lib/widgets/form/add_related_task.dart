@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/app_provider.dart';
-import 'package:flutter_application_1/styles/styles.dart';
+import 'package:flutter_application_1/widgets/styles/styles.dart';
 import 'package:flutter_application_1/widgets/add_relationship.dart';
 import 'package:flutter_application_1/widgets/form/form_components.dart';
 import 'package:provider/provider.dart';

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/app_provider.dart';
 import 'package:provider/provider.dart';
-import '../classes/db_provider.dart';
-import '../styles/styles.dart';
+import 'styles/styles.dart';
 
 class Filter extends StatelessWidget {
   const Filter({super.key, required this.callback});

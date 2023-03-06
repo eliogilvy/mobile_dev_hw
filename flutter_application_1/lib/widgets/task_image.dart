@@ -10,4 +10,14 @@ class TaskImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(width: 200, height: 200, child: Image.file(File(image)));
   }
+
+  Widget getFile() {
+    File? file;
+    try {
+      file = File(image);
+      return Image.file(file);
+    } catch (e) {
+      return Container();
+    }
+  }
 }

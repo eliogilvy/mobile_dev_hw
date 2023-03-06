@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/classes/app_provider.dart';
 import 'package:provider/provider.dart';
 import '../classes/task.dart';
-import '../styles/styles.dart';
+import 'styles/styles.dart';
 
 class TaskDisplay extends StatefulWidget {
   final bool edit;
